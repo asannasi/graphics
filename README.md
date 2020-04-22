@@ -1,7 +1,7 @@
 # Graphics Side Project
 
 This project is meant to further my personal self-studying of computer 
-graphics.
+graphics. Currently, it parses an object file and displays a static pointcloud.
 
 ## How to run
 
