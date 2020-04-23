@@ -9,7 +9,7 @@ private:
 	std::string shaderCode;
 
 public:
-	ShaderFile::ShaderFile(std::string fileName);
-	ShaderFile::~ShaderFile();
-	const std::string* ShaderFile::getCode();
+	ShaderFile(std::string fileName);
+	~ShaderFile();
+	const std::string* getCode();
 };

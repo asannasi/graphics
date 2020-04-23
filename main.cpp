@@ -7,7 +7,7 @@
 
 #define MAJOR_VERSION 3
 #define MINOR_VERSION 3
-#define INFO_LOG_BUFFER_SIZE 512
+
 
 namespace {
 	// Set window properties
@@ -20,24 +20,7 @@ namespace {
 	std::string objFilename = "a.obj";
 };
 
-inline void compileShader(GLuint& id, GLenum type, std::string filename) {
-	// Get ref id for shader object
-	id = glCreateShader(type);
-	// Parse shader file and compile at runtime
-	ShaderFile file = ShaderFile(filename);
-	const char* code = file.getCode()->c_str();
-	glShaderSource(id, 1, &code, NULL);
-	glCompileShader(id);
-	// If compilation failed, throw exception and print compile errors
-	int compileSuccess;
-	char infoLogBuffer[INFO_LOG_BUFFER_SIZE];
-	glGetShaderiv(id, GL_COMPILE_STATUS, &compileSuccess);
-	if (!compileSuccess) {
-		glGetShaderInfoLog(id, INFO_LOG_BUFFER_SIZE, NULL, infoLogBuffer);
-		std::cerr << infoLogBuffer << std::endl;
-		throw std::exception("Shader not compiled. Check cerr.");
-	}
-}
+
 
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	// Tell openGL the window dimensions (can be different from glfw's)
@@ -88,40 +71,17 @@ int main(void) {
 		glfwTerminate(); // free GLFW window before exiting
 		return EXIT_FAILURE;
 	}
-	
-	// Attempt compiling shaders for GPU
-	GLuint vertexShader;
-	GLuint fragmentShader;
+
 	try {
-		compileShader(vertexShader, GL_VERTEX_SHADER, vShaderFilename);
-		compileShader(fragmentShader, GL_FRAGMENT_SHADER, fShaderFilename);
+		Renderer r = Renderer(vShaderFilename, fShaderFilename, windowWidth, windowHeight);
 	}
-	catch(std::exception& e){
+	catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
 		glfwDestroyWindow(window); // destroys specified window
 		glfwTerminate(); // destroys all windows
 		return EXIT_FAILURE;
 	}
-	// Link compiled shaders into shader program object and activate it
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	// If compilation failed, throw exception and print compile errors
-	int linkSuccess;
-	char infoLogBuffer[INFO_LOG_BUFFER_SIZE];
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkSuccess);
-	if (!linkSuccess) {
-		glGetProgramInfoLog(shaderProgram, INFO_LOG_BUFFER_SIZE, NULL, infoLogBuffer);
-		std::cerr << "Shader program not linked\n" << infoLogBuffer << std::endl;
-		glfwDestroyWindow(window); // destroys specified window
-		glfwTerminate(); // destroys all windows
-		return EXIT_FAILURE;
-	}
-	glUseProgram(shaderProgram);
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	
 	// Allocate a vertex buffer object that will store vertices in GPU memory
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
@@ -155,7 +115,6 @@ int main(void) {
 	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
-
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
 		glDrawArrays(GL_POINTS, 0, vertices->size());

@@ -16,5 +16,7 @@ public:
 	// constructor opens file and parses it
 	ObjFile(std::string fileName);
 	~ObjFile();
+	
+	// Returns a pointer to the vertices parsed in the object file
 	const std::vector<glm::vec3>* getVertices();
 };

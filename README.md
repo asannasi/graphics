@@ -1,7 +1,8 @@
 # Graphics Side Project
 
 This project is meant to further my personal self-studying of computer 
-graphics. Currently, it parses an object file and displays a static pointcloud.
+graphics. Currently, it parses an object file and displays a static pointcloud 
+after transforming it into clip space from model space.
 
 ## How to run
 
