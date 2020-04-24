@@ -20,11 +20,34 @@ namespace {
 	std::string objFilename = "a.obj";
 };
 
-
-
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	// Tell openGL the window dimensions (can be different from glfw's)
 	glViewport(0, 0, width, height);
+}
+
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	// Check for key press and then check if uppercase or lowercase key by checking shift
+	if (action == GLFW_PRESS) {
+		if (mods == GLFW_MOD_SHIFT) {
+			switch (key) {
+			default:
+				break;
+			}
+		}
+		else {
+			switch (key) {
+			case (GLFW_KEY_ESCAPE):
+				// Close window
+				glfwSetWindowShouldClose(window, GL_TRUE);
+				break;
+			case(GLFW_KEY_S):
+				// Spin object
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
 
 int main(void) {
@@ -62,6 +85,10 @@ int main(void) {
 
 	// Set the callback function when the window is resized
 	glfwSetFramebufferSizeCallback(window, windowResizeCallback);
+	windowResizeCallback(window, windowWidth, windowHeight);
+
+	// Set the callback function when a key is pressed
+	glfwSetKeyCallback(window, keyCallback);
 
 	// Initialize GLEW, which is a library that checks supported openGL 
 	// extensions at runtime on the target platform.
@@ -72,8 +99,11 @@ int main(void) {
 		return EXIT_FAILURE;
 	}
 
+	Renderer renderer;
 	try {
-		Renderer r = Renderer(vShaderFilename, fShaderFilename, windowWidth, windowHeight);
+		ShaderFile vertFile = ShaderFile(vShaderFilename);
+		ShaderFile fragFile = ShaderFile(fShaderFilename);
+		renderer = Renderer(vertFile, fragFile, windowWidth, windowHeight);
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -81,43 +111,22 @@ int main(void) {
 		glfwTerminate(); // destroys all windows
 		return EXIT_FAILURE;
 	}
-	
-	// Allocate a vertex buffer object that will store vertices in GPU memory
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	// Indicate intent to use this buffer object for vertex attribute data
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	/*
+
 	// Define triangle's points
-	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f,  0.5f, 0.0f
-	};
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	*/
+	std::vector<glm::vec3> v;
+	v.push_back(glm::vec3(-3.0f, -0.5f, 0.0f));
+	v.push_back(glm::vec3(3.0f, -0.5f, 0.0f));
+	v.push_back(glm::vec3(0.5f, -3.0f, 0.0f));
+	Object triangle = Object(&v);
+	
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
-	const std::vector<glm::vec3>* vertices = objFile.getVertices();
-	// Send vertices to buffer binded to GL_ARRAY_BUFFER
-	// Uses GL_STATIC_DRAW since vertex data won't be changed
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*vertices->size(), vertices->data(), GL_STATIC_DRAW);
+	Object dragon = Object(objFile.getVertices());
 
-	// To store vertex attribute pointer configurations, use vertex array object (VAO)
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// Tell openGL how to interpret vertex data in memory by communicating with the
-	// vertex shader through vertex attributes
-	// We want to pass vertices to location 0 (specified in the vertex shader).
-	// Describe vertex array properties through parameters
-	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
-		glDrawArrays(GL_POINTS, 0, vertices->size());
+		renderer.render(dragon);
+		renderer.render(triangle);
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
 	}
@@ -126,8 +135,6 @@ int main(void) {
 	// Unbind the VBO and VAO and free them
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-	glDeleteBuffers(1, &vbo);
-	glDeleteVertexArrays(1, &vao);
 	glfwDestroyWindow(window); // destroys specified window
 	glfwTerminate(); // destroys all windows
 

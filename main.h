@@ -6,4 +6,5 @@
 #include <iostream>
 
 #include "ObjFile.h"
+#include "Object.h"
 #include "Renderer.h"

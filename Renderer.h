@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Shaders.h"
+#include "Object.h"
 
 class Renderer
 {
@@ -18,8 +19,11 @@ private:
 	Shaders shaders;
 
 public:
-	Renderer(std::string vShaderFilename, std::string fShaderFilename, int width, int height);
-	void render(const std::vector<glm::vec3>* vertices, glm::mat4 modelToWorld);
+	Renderer() = default;
+	Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int height);
+	void setAspectRatio(int width, int height);
+	void render(Object& obj);
+	void setModelMatrix(glm::mat4 modeltoWorld);
 	void setViewMatrix(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
 	void setProjMatrix(float fov, float aspectRatio, float near, float far);
 	~Renderer();

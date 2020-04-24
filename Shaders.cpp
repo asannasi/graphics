@@ -1,11 +1,9 @@
 #include "Shaders.h"
 
-Shaders::Shaders(std::string vShaderFilename, std::string fShaderFilename) {
+Shaders::Shaders(ShaderFile vertFile, ShaderFile fragFile) {
 	// Attempt compiling shaders for GPU
-	GLuint vertexShader;
-	GLuint fragmentShader;
-	compileShader(vertexShader, GL_VERTEX_SHADER, vShaderFilename);
-	compileShader(fragmentShader, GL_FRAGMENT_SHADER, fShaderFilename);
+	GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertFile);
+	GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragFile);
 
 	// Link compiled shaders into shader program object and activate it
 	programID = glCreateProgram();
@@ -28,11 +26,9 @@ Shaders::Shaders(std::string vShaderFilename, std::string fShaderFilename) {
 	glDeleteShader(fragmentShader);
 }
 
-void Shaders::compileShader(GLuint& id, GLenum type, std::string filename) {
+GLuint Shaders::compileShader(GLenum type, ShaderFile file) {
 	// Get ref id for shader object
-	id = glCreateShader(type);
-	// Parse shader file and compile at runtime
-	ShaderFile file = ShaderFile(filename);
+	GLuint id = glCreateShader(type);
 	const char* code = file.getCode()->c_str();
 	glShaderSource(id, 1, &code, NULL);
 	glCompileShader(id);
@@ -45,6 +41,7 @@ void Shaders::compileShader(GLuint& id, GLenum type, std::string filename) {
 		std::cerr << infoLogBuffer << std::endl;
 		throw std::exception("Shader not compiled. Check cerr.");
 	}
+	return id;
 }
 
 Shaders::~Shaders() {
