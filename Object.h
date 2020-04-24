@@ -35,5 +35,7 @@ public:
 	// and cumatively for past translations
 	void translate(GLfloat dist, glm::vec3 axis);
 
+	void uniformScale(GLfloat factor);
+
 };
 

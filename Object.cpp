@@ -71,6 +71,11 @@ void Object::translate(GLfloat dist, glm::vec3 axis) {
 	modelToWorld[TRANSLATION_INDEX] = modelToWorld[TRANSLATION_INDEX] + translation;
 }
 
+void Object::uniformScale(GLfloat factor) {
+	glm::vec3 scaleFactor = glm::vec3(factor, factor, factor);
+	modelToWorld = glm::scale(modelToWorld, scaleFactor);
+}
+
 glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
 }

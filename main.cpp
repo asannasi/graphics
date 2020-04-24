@@ -21,6 +21,9 @@ namespace {
 
 	const int numObjects = 2;
 	Object* objects[numObjects];
+
+	const float SCALE_FACTOR = 0.5f;
+	const float MOVE_DIST = 1.0f;
 };
 
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
@@ -33,6 +36,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (action == GLFW_PRESS) {
 		if (mods == GLFW_MOD_SHIFT) {
 			switch (key) {
+			case(GLFW_KEY_COMMA):
+				objects[0]->uniformScale(SCALE_FACTOR);
+				break;
+			case(GLFW_KEY_PERIOD):
+				objects[0]->uniformScale(1.0f + SCALE_FACTOR);
+				break;
 			default:
 				break;
 			}
@@ -54,16 +63,16 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				break;
 			// Movement Keys WASD
 			case GLFW_KEY_A:
-				objects[0]->translate(3.0f, glm::vec3(-1, 0, 0));
+				objects[0]->translate(MOVE_DIST, glm::vec3(-1, 0, 0));
 				break;
 			case GLFW_KEY_D:
-				objects[0]->translate(3.0f, glm::vec3(1, 0, 0));
+				objects[0]->translate(MOVE_DIST, glm::vec3(1, 0, 0));
 				break;
 			case GLFW_KEY_W:
-				objects[0]->translate(3.0f, glm::vec3(0, 1, 0));
+				objects[0]->translate(MOVE_DIST, glm::vec3(0, 1, 0));
 				break;
 			case GLFW_KEY_S:
-				objects[0]->translate(3.0f, glm::vec3(0, -1, 0));
+				objects[0]->translate(MOVE_DIST, glm::vec3(0, -1, 0));
 				break;
 			default:
 				break;
