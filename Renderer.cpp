@@ -33,22 +33,22 @@ void Renderer::setAspectRatio(int width, int height) {
 }
 
 void Renderer::render(Object& obj) {
+	setModelMatrix(obj.getModelMatrix());
 	glBindVertexArray(obj.getVAO());
-	glPointSize(5);
 	glDrawArrays(GL_POINTS, 0, obj.getNumVertices());
 	glBindVertexArray(0);
 }
 
-void Renderer::setModelMatrix(glm::mat4 modeltoWorld) {
-	shaders.setUniformModel(modeltoWorld);
+void Renderer::setModelMatrix(glm::mat4& modelToWorld) {
+	shaders.setUniformModel(modelToWorld);
 }
 
-void Renderer::setViewMatrix(glm::vec3 pos, glm::vec3 target, glm::vec3 up) {
+void Renderer::setViewMatrix(glm::vec3& pos, glm::vec3& target, glm::vec3& up) {
 	view = glm::lookAt(pos, target, up);
 	shaders.setUniformView(view);
 }
 
-void Renderer::setProjMatrix(float fov, float aspectRatio, float near, float far) {
+void Renderer::setProjMatrix(float& fov, float& aspectRatio, float& near, float& far) {
 	proj = glm::perspective(fov, aspectRatio, near, far);
 	shaders.setUniformProj(proj);
 }

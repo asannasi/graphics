@@ -112,21 +112,16 @@ int main(void) {
 		return EXIT_FAILURE;
 	}
 
-	// Define triangle's points
-	std::vector<glm::vec3> v;
-	v.push_back(glm::vec3(-3.0f, -0.5f, 0.0f));
-	v.push_back(glm::vec3(3.0f, -0.5f, 0.0f));
-	v.push_back(glm::vec3(0.5f, -3.0f, 0.0f));
-	Object triangle = Object(&v);
-	
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
 	Object dragon = Object(objFile.getVertices());
 
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		renderer.render(dragon);
-		renderer.render(triangle);
+		dragon.spin(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
 	}

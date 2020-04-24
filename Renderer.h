@@ -23,9 +23,9 @@ public:
 	Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int height);
 	void setAspectRatio(int width, int height);
 	void render(Object& obj);
-	void setModelMatrix(glm::mat4 modeltoWorld);
-	void setViewMatrix(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
-	void setProjMatrix(float fov, float aspectRatio, float near, float far);
+	void setModelMatrix(glm::mat4& modeltoWorld);
+	void setViewMatrix(glm::vec3& pos, glm::vec3& target, glm::vec3& up);
+	void setProjMatrix(float& fov, float& aspectRatio, float& near, float& far);
 	~Renderer();
 };
 

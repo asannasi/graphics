@@ -1,7 +1,7 @@
 #include "Object.h"
 
 Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
-	modelToWorld = glm::mat4();
+	modelToWorld = glm::mat4(1.0f);
 
 	// Allocate a vertex buffer object that will store vertices in GPU memory
 	glGenBuffers(1, &vbo);
@@ -43,4 +43,13 @@ int Object::getNumVertices()
 GLuint Object::getVAO()
 {
 	return vao;
+}
+
+void Object::spin(float deg, glm::vec3 axis) {
+	// Update the model matrix by multiplying a rotation matrix
+	modelToWorld = glm::rotate(modelToWorld, glm::radians(deg), axis);
+}
+
+glm::mat4 Object::getModelMatrix() {
+	return modelToWorld;
 }

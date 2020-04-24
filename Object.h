@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtx/transform.hpp>
 
 #include "ObjFile.h"
 
@@ -18,5 +19,7 @@ public:
 	~Object();
 	int getNumVertices();
 	GLuint getVAO();
+	void spin(float deg, glm::vec3 axis);
+	glm::mat4 getModelMatrix();
 };
 
