@@ -2,6 +2,7 @@
 
 Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
 	modelToWorld = glm::mat4(1.0f);
+	spinning = false;
 
 	// Allocate a vertex buffer object that will store vertices in GPU memory
 	glGenBuffers(1, &vbo);
@@ -45,11 +46,31 @@ GLuint Object::getVAO()
 	return vao;
 }
 
-void Object::spin(float deg, glm::vec3 axis) {
+void Object::update() {
+	if (spinning) {
+		rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+}
+
+void Object::setSpinning(bool spin) {
+	spinning = spin;
+}
+
+bool Object::isSpinning() {
+	return spinning;
+}
+
+void Object::rotate(float deg, glm::vec3 axis) {
 	// Update the model matrix by multiplying a rotation matrix
 	modelToWorld = glm::rotate(modelToWorld, glm::radians(deg), axis);
 }
 
-glm::mat4 Object::getModelMatrix() {
+void Object::translate(GLfloat dist, glm::vec3 axis) {
+	// Move model along axis by dist amount independent of transformations
+	glm::vec4 translation = glm::vec4((axis * dist), 0.0f);
+	modelToWorld[TRANSLATION_INDEX] = modelToWorld[TRANSLATION_INDEX] + translation;
+}
+
+glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
 }

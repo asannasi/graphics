@@ -18,6 +18,9 @@ namespace {
 	std::string vShaderFilename = "shader.vert";
 	std::string fShaderFilename = "shader.frag";
 	std::string objFilename = "a.obj";
+
+	const int numObjects = 2;
+	Object* objects[numObjects];
 };
 
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
@@ -40,8 +43,27 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				// Close window
 				glfwSetWindowShouldClose(window, GL_TRUE);
 				break;
-			case(GLFW_KEY_S):
+			case(GLFW_KEY_R):
 				// Spin object
+				if (objects[0]->isSpinning()) {
+					objects[0]->setSpinning(false);
+				}
+				else {
+					objects[0]->setSpinning(true);
+				}
+				break;
+			// Movement Keys WASD
+			case GLFW_KEY_A:
+				objects[0]->translate(3.0f, glm::vec3(-1, 0, 0));
+				break;
+			case GLFW_KEY_D:
+				objects[0]->translate(3.0f, glm::vec3(1, 0, 0));
+				break;
+			case GLFW_KEY_W:
+				objects[0]->translate(3.0f, glm::vec3(0, 1, 0));
+				break;
+			case GLFW_KEY_S:
+				objects[0]->translate(3.0f, glm::vec3(0, -1, 0));
 				break;
 			default:
 				break;
@@ -115,13 +137,13 @@ int main(void) {
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
 	Object dragon = Object(objFile.getVertices());
+	objects[0] = &dragon;
 
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		renderer.render(dragon);
-		dragon.spin(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
 	}

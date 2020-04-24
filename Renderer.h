@@ -10,6 +10,12 @@
 class Renderer
 {
 private:
+	// Defaults for creating projection matrix
+	float fov = 45.0f; // field of view
+	float aspectRatio = 0;
+	float near = 0.1f;
+	float far = 100.0f;
+
 	// View matrix that transforms world space to view space
 	glm::mat4 view;
 	// Projection matrix that transforms view space into clip space

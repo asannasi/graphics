@@ -16,23 +16,19 @@ Renderer::Renderer (ShaderFile vertFile, ShaderFile fragFile, int width, int hei
 
 	setViewMatrix(cameraPos, cameraTarget, cameraUp);
 
-	float fov = 45.0f; // field of view
-	float aspectRatio = (float)width / (float)height;
-	float near = 0.1f;
-	float far = 100.0f;
-
+	aspectRatio = (float)width / (float)height;
 	setProjMatrix(fov, aspectRatio, near, far);
 }
 
 void Renderer::setAspectRatio(int width, int height) {
-	float fov = 45.0f; // field of view
-	float aspectRatio = (float)width / (float)height;
-	float near = 0.1f;
-	float far = 100.0f;
+	aspectRatio = (float)width / (float)height;
 	setProjMatrix(fov, aspectRatio, near, far);
 }
 
 void Renderer::render(Object& obj) {
+	// Update the object's model matrix and then pass it to the
+	// shader. Then bind the vao for the object and draw it.
+	obj.update();
 	setModelMatrix(obj.getModelMatrix());
 	glBindVertexArray(obj.getVAO());
 	glDrawArrays(GL_POINTS, 0, obj.getNumVertices());
