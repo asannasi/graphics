@@ -29,5 +29,5 @@ public:
 	void setUniformModel(glm::mat4& model);
 	void setUniformView(glm::mat4& view);
 	void setUniformProj(glm::mat4& proj);
+	void setUniformProjView(glm::mat4 ProjView);
 };
-
