@@ -24,6 +24,9 @@ namespace {
 
 	const float SCALE_FACTOR = 0.5f;
 	const float MOVE_DIST = 1.0f;
+	const float CAMERA_ROTATE_ANG = 45.0f;
+
+	Renderer* renderer;
 };
 
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
@@ -73,6 +76,12 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				break;
 			case GLFW_KEY_S:
 				objects[0]->translate(MOVE_DIST, glm::vec3(0, -1, 0));
+				break;
+			case GLFW_KEY_Q:
+				renderer->rotateCameraLeft(CAMERA_ROTATE_ANG);
+				break;
+			case GLFW_KEY_E:
+				renderer->rotateCameraRight(CAMERA_ROTATE_ANG);
 				break;
 			default:
 				break;
@@ -130,11 +139,10 @@ int main(void) {
 		return EXIT_FAILURE;
 	}
 
-	Renderer renderer;
 	try {
 		ShaderFile vertFile = ShaderFile(vShaderFilename);
 		ShaderFile fragFile = ShaderFile(fShaderFilename);
-		renderer = Renderer(vertFile, fragFile, windowWidth, windowHeight);
+		renderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -152,13 +160,14 @@ int main(void) {
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		renderer.render(dragon);
+		renderer->render(dragon);
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
 	}
 
 	// Deallocate resources:
 	// Unbind the VBO and VAO and free them
+	delete renderer;
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glfwDestroyWindow(window); // destroys specified window

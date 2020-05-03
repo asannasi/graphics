@@ -15,3 +15,8 @@ void Camera::setAspectRatio(int width, int height) {
 glm::mat4 Camera::getProjViewMatrix() {
 	return proj * view;
 }
+
+void Camera::rotate(float deg, glm::vec3 axis) {
+	position = glm::rotate(position, glm::radians(deg), axis);
+	view = glm::lookAt(position, target, up);
+}

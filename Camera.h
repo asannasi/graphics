@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
-
+#include <glm/gtx/rotate_vector.hpp>
 
 class Camera
 {
@@ -34,4 +34,5 @@ public:
 	void setAspectRatio(int width, int height);
 
 	glm::mat4 getProjViewMatrix();
+	void rotate(float deg, glm::vec3 axis);
 };

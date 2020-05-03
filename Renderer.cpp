@@ -21,4 +21,14 @@ void Renderer::render(Object& obj) {
 	glBindVertexArray(0);
 }
 
+void Renderer::rotateCameraLeft(float deg) {
+	camera.rotate(deg, glm::vec3(0,1,0));
+	shaders.setUniformProjView(camera.getProjViewMatrix());
+}
+
+void Renderer::rotateCameraRight(float deg) {
+	camera.rotate(deg, glm::vec3(0, -1, 0));
+	shaders.setUniformProjView(camera.getProjViewMatrix());
+}
+
 Renderer::~Renderer() {}

@@ -18,10 +18,10 @@ private:
 	Shaders shaders;
 
 public:
-	Renderer() = default;
 	Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int height);
 	void setAspectRatio(int width, int height);
 	void render(Object& obj);
+	void rotateCameraLeft(float deg);
+	void rotateCameraRight(float deg);
 	~Renderer();
 };
-
