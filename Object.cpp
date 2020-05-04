@@ -1,38 +1,44 @@
 #include "Object.h"
 
 Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
-	modelToWorld = glm::mat4(1.0f);
+	modelToWorld = glm::mat4(1.0f); // Identity Matrix
 	spinning = false;
+	
+	// To store vertex attribute pointer configurations, use vertex array object (VAO)
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
-	// Allocate a vertex buffer object that will store vertices in GPU memory
-	glGenBuffers(1, &vbo);
-	// Indicate intent to use this buffer object for vertex attribute data
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	// Allocate buffer objects that will store vertices in GPU memory
+	numBuffers = 1;
+	buffers[numBuffers];
+	glGenBuffers(numBuffers, buffers);
+	bufferData(vertices, VERTEX_ATTR_INDEX);
 
-	// Send vertices to buffer binded to GL_ARRAY_BUFFER
-	// Uses GL_STATIC_DRAW since vertex data won't be changed
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
+	// Unbind from the VAO.
+	glBindVertexArray(0);
+}
+
+Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n) :vertices(v), normals(n) {
+	modelToWorld = glm::mat4(1.0f); // Identity Matrix
+	spinning = false;
 
 	// To store vertex attribute pointer configurations, use vertex array object (VAO)
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	// Tell openGL how to interpret vertex data in memory by communicating with the
-	// vertex shader through vertex attributes
-	// We want to pass vertices to location 0 (specified in the vertex shader).
-	// Describe vertex array properties through parameters
-	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
+	// Allocate buffer objects that will store vertices in GPU memory
+	numBuffers = 2;
+	buffers[numBuffers];
+	glGenBuffers(numBuffers, buffers);
+	bufferData(vertices, VERTEX_ATTR_INDEX);
+	bufferData(normals, NORMAL_ATTR_INDEX);
 
-	// Unbind from the VBO.
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// Unbind from the VAO.
 	glBindVertexArray(0);
 }
 
 Object::~Object(){
-	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(numBuffers, buffers);
 	glDeleteVertexArrays(1, &vao);
 }
 
@@ -78,4 +84,24 @@ void Object::uniformScale(GLfloat factor) {
 
 glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
+}
+
+void Object::bufferData(const std::vector<glm::vec3>* data, int index) {
+	// Indicate intent to use this buffer object for attribute data
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[index]);
+
+	// Send data to buffer binded to GL_ARRAY_BUFFER
+	// Uses GL_STATIC_DRAW since data won't be changed
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * data->size(), data->data(), GL_STATIC_DRAW);
+
+	// Tell openGL how to interpret data in memory by communicating with the
+	// shader through attributes
+	// Ex. We want to pass vertices to location 0 (specified in the vertex shader).
+	// Describe vertex array properties through parameters
+	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(index);
+
+	// Unbind from the VBO.
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

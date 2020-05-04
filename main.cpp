@@ -5,18 +5,18 @@
 
 #include "main.h"
 
-#define MAJOR_VERSION 3
-#define MINOR_VERSION 3
-
-
 namespace {
+	// Set openGL version
+	constexpr int MAJOR_VERSION = 3;
+	constexpr int MINOR_VERSION = 3;
+
 	// Set window properties
 	int windowWidth = 800;
 	int windowHeight = 600;
 	const char* windowTitle = "Graphics Project";
 
-	std::string vShaderFilename = "shader.vert";
-	std::string fShaderFilename = "shader.frag";
+	std::string vShaderFilename = "normalsShader.vert";
+	std::string fShaderFilename = "normalsShader.frag";
 	std::string objFilename = "a.obj";
 
 	const int numObjects = 2;
@@ -153,7 +153,7 @@ int main(void) {
 
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
-	Object dragon = Object(objFile.getVertices());
+	Object dragon = Object(objFile.getVertices(), objFile.getNormals());
 	objects[0] = &dragon;
 
 	// Keep running until the window is told to close
