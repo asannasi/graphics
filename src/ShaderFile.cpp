@@ -1,4 +1,4 @@
-#include "ShaderFile.h"
+#include "../headers/ShaderFile.h"
 
 ShaderFile::ShaderFile(std::string fileName) {
 	std::ifstream fStream(fileName, std::ios::in);

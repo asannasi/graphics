@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "../headers/Renderer.h"
 
 Renderer::Renderer (ShaderFile vertFile, ShaderFile fragFile, int width, int height) {
 	shaders = Shaders(vertFile, fragFile);	// Can throw exception

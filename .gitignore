@@ -1,0 +1,11 @@
+﻿/.vs
+/Debug
+/packages
+/Release
+/x64
+/packages.config
+/Graphics.vcxproj.user
+/Graphics.vcxproj.filters
+/Graphics.vcxproj
+/Graphics.sln
+/a.obj

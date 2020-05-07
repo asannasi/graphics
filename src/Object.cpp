@@ -1,4 +1,4 @@
-#include "Object.h"
+#include "../headers/Object.h"
 
 Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
 	modelToWorld = glm::mat4(1.0f); // Identity Matrix
@@ -10,7 +10,7 @@ Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
 
 	// Allocate buffer objects that will store vertices in GPU memory
 	numBuffers = 1;
-	buffers[numBuffers];
+	buffers = new GLuint[numBuffers];
 	glGenBuffers(numBuffers, buffers);
 	bufferData(vertices, VERTEX_ATTR_INDEX);
 
@@ -28,8 +28,9 @@ Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n)
 
 	// Allocate buffer objects that will store vertices in GPU memory
 	numBuffers = 2;
-	buffers[numBuffers];
+	buffers = new GLuint[numBuffers];
 	glGenBuffers(numBuffers, buffers);
+
 	bufferData(vertices, VERTEX_ATTR_INDEX);
 	bufferData(normals, NORMAL_ATTR_INDEX);
 
@@ -39,6 +40,7 @@ Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n)
 
 Object::~Object(){
 	glDeleteBuffers(numBuffers, buffers);
+	delete[] buffers;
 	glDeleteVertexArrays(1, &vao);
 }
 
@@ -101,7 +103,6 @@ void Object::bufferData(const std::vector<glm::vec3>* data, int index) {
 	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(index);
-
 	// Unbind from the VBO.
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

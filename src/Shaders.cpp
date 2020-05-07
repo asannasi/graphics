@@ -1,4 +1,4 @@
-#include "Shaders.h"
+#include "../headers/Shaders.h"
 
 Shaders::Shaders(ShaderFile vertFile, ShaderFile fragFile) {
 	// Attempt compiling shaders for GPU

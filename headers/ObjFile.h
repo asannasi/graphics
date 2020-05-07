@@ -8,7 +8,8 @@
 class ObjFile {
 private:
 	std::vector<glm::vec3> vertices;
-	
+	std::vector<glm::vec3> normals;
+
 	// helper function to parse lines in obj file
 	void parse(FILE* pFile);
 
@@ -17,6 +18,7 @@ public:
 	ObjFile(std::string fileName);
 	~ObjFile();
 	
-	// Returns a pointer to the vertices parsed in the object file
+	// Returns a pointer to data parsed in the object file
 	const std::vector<glm::vec3>* getVertices();
+	const std::vector<glm::vec3>* getNormals();
 };

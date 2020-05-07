@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "../headers/Camera.h"
 
 Camera::Camera(int width, int height) {
 	view = glm::lookAt(position, target, up);

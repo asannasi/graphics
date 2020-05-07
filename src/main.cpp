@@ -3,20 +3,20 @@
  * It's written to reinforce personal self-studying.
  */
 
-#include "main.h"
-
-#define MAJOR_VERSION 3
-#define MINOR_VERSION 3
-
+#include "../headers/main.h"
 
 namespace {
+	// Set openGL version 
+	constexpr int MAJOR_VERSION = 3;
+	constexpr int MINOR_VERSION = 3;
+
 	// Set window properties
 	int windowWidth = 800;
 	int windowHeight = 600;
 	const char* windowTitle = "Graphics Project";
 
-	std::string vShaderFilename = "shader.vert";
-	std::string fShaderFilename = "shader.frag";
+	std::string vShaderFilename = ".\\shaders\\vert\\normalsShader.vert";
+	std::string fShaderFilename = ".\\shaders\\frag\\normalsShader.frag";
 	std::string objFilename = "a.obj";
 
 	const int numObjects = 2;
@@ -135,7 +135,7 @@ int main(void) {
 	// Initialize GLEW, which is a library that checks supported openGL 
 	// extensions at runtime on the target platform.
 	glewExperimental = GL_TRUE;
-	if (glewInit() || !glGenVertexArrays) {
+	if (glewInit() || !glGenVertexArrays || !glGenBuffers) {
 		std::cerr << "Failed to initialize GLEW" << std::endl;
 		glfwTerminate(); // free GLFW window before exiting
 		return EXIT_FAILURE;
@@ -155,7 +155,7 @@ int main(void) {
 
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
-	Object dragon = Object(objFile.getVertices());
+	Object dragon = Object(objFile.getVertices(), objFile.getNormals());
 	objects[0] = &dragon;
 
 	// Keep running until the window is told to close
