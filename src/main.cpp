@@ -5,18 +5,18 @@
 
 #include "main.h"
 
-namespace {
-	// Set openGL version
-	constexpr int MAJOR_VERSION = 3;
-	constexpr int MINOR_VERSION = 3;
+#define MAJOR_VERSION 3
+#define MINOR_VERSION 3
 
+
+namespace {
 	// Set window properties
 	int windowWidth = 800;
 	int windowHeight = 600;
 	const char* windowTitle = "Graphics Project";
 
-	std::string vShaderFilename = "normalsShader.vert";
-	std::string fShaderFilename = "normalsShader.frag";
+	std::string vShaderFilename = "shader.vert";
+	std::string fShaderFilename = "shader.frag";
 	std::string objFilename = "a.obj";
 
 	const int numObjects = 2;
@@ -39,6 +39,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (action == GLFW_PRESS) {
 		if (mods == GLFW_MOD_SHIFT) {
 			switch (key) {
+			// Scale object
 			case(GLFW_KEY_COMMA):
 				objects[0]->uniformScale(SCALE_FACTOR);
 				break;
@@ -77,6 +78,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			case GLFW_KEY_S:
 				objects[0]->translate(MOVE_DIST, glm::vec3(0, -1, 0));
 				break;
+			// Rotate camera
 			case GLFW_KEY_Q:
 				renderer->rotateCameraLeft(CAMERA_ROTATE_ANG);
 				break;
@@ -153,7 +155,7 @@ int main(void) {
 
 	// Load vertices from obj file
 	ObjFile objFile = ObjFile(objFilename);
-	Object dragon = Object(objFile.getVertices(), objFile.getNormals());
+	Object dragon = Object(objFile.getVertices());
 	objects[0] = &dragon;
 
 	// Keep running until the window is told to close

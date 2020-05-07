@@ -9,27 +9,15 @@
 class Object
 {
 private:
-	// Where translation values are in the model matrix
-	static const int TRANSLATION_INDEX = 3; 
-
-	// Match the attribute index locations with those defined in the shader
-	static const int VERTEX_ATTR_INDEX = 0;
-	static const int NORMAL_ATTR_INDEX = 1;
-
+	const int TRANSLATION_INDEX = 3;
 	const std::vector<glm::vec3>* vertices; // list of vertices
-	const std::vector<glm::vec3>* normals; // list of normals
 	glm::mat4 modelToWorld; // changes model coordinates to world space
-	
-	int numBuffers; // Total number of buffer object id's
-	GLuint* buffers; // vertex buffer object ids
+	GLuint vbo; // vertex buffer object id
 	GLuint vao; // vertex attribute object id
 	bool spinning; // Whether the model should spin
 
-	void bufferData(const std::vector<glm::vec3>* data, int index);
-
 public:
 	Object(const std::vector<glm::vec3>* vertices);
-	Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n);
 	~Object();
 
 	// Getters and Setters
