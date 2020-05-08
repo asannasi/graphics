@@ -1,6 +1,7 @@
 #include "../headers/Renderer.h"
 
 Renderer::Renderer (ShaderFile vertFile, ShaderFile fragFile, int width, int height) {
+	mode = RenderMode::FULL;
 	shaders = Shaders(vertFile, fragFile);	// Can throw exception
 	camera = Camera(width, height);
 	shaders.setUniformProjView(camera.getProjViewMatrix());
@@ -11,13 +12,28 @@ void Renderer::setAspectRatio(int width, int height) {
 	shaders.setUniformProjView(camera.getProjViewMatrix());
 }
 
+void Renderer::setRenderModePointCloud() {
+	mode = RenderMode::POINTCLOUD;
+}
+
+void Renderer::setRenderModeFull() {
+	mode = RenderMode::FULL;
+}
+
 void Renderer::render(Object& obj) {
 	// Update the object's model matrix and then pass it to the
 	// shader. Then bind the vao for the object and draw it.
 	obj.update();
 	shaders.setUniformModel(obj.getModelMatrix());
 	glBindVertexArray(obj.getVAO());
-	glDrawArrays(GL_POINTS, 0, obj.getNumVertices());
+	// Check rendering mode
+	if (mode == RenderMode::POINTCLOUD) {
+		glDrawArrays(GL_POINTS, 0, obj.getNumVertices());
+	}
+	else {
+		glDrawElements(GL_TRIANGLES, obj.getNumFaces(), GL_UNSIGNED_INT, 0);
+	}
+	// Unbind VAO
 	glBindVertexArray(0);
 }
 

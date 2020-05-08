@@ -26,6 +26,7 @@ namespace {
 	const float MOVE_DIST = 1.0f;
 	const float CAMERA_ROTATE_ANG = 45.0f;
 
+	ObjFile* objFile;
 	Renderer* renderer;
 };
 
@@ -55,6 +56,14 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			case (GLFW_KEY_ESCAPE):
 				// Close window
 				glfwSetWindowShouldClose(window, GL_TRUE);
+				break;
+			case (GLFW_KEY_P):
+				// Change render mode
+				renderer->setRenderModePointCloud();
+				break;
+			case (GLFW_KEY_F):
+				// Change render mode
+				renderer->setRenderModeFull();
 				break;
 			case(GLFW_KEY_R):
 				// Spin object
@@ -142,9 +151,12 @@ int main(void) {
 	}
 
 	try {
+		// Load shaders and create renderer
 		ShaderFile vertFile = ShaderFile(vShaderFilename);
 		ShaderFile fragFile = ShaderFile(fShaderFilename);
 		renderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
+		// Load vertices from obj file
+		objFile = new ObjFile(objFilename);
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -153,14 +165,12 @@ int main(void) {
 		return EXIT_FAILURE;
 	}
 
-	// Load vertices from obj file
-	ObjFile objFile = ObjFile(objFilename);
-	Object dragon = Object(objFile.getVertices(), objFile.getNormals());
+	Object dragon = Object(objFile->getVertices(), objFile->getNormals(), objFile->getFaces());
 	objects[0] = &dragon;
 
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		renderer->render(dragon);
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
@@ -170,8 +180,7 @@ int main(void) {
 	// Deallocate resources:
 	// Unbind the VBO and VAO and free them
 	delete renderer;
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	delete objFile;
 	glfwDestroyWindow(window); // destroys specified window
 	glfwTerminate(); // destroys all windows
 

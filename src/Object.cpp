@@ -1,24 +1,7 @@
 #include "../headers/Object.h"
 
-Object::Object (const std::vector<glm::vec3>* v):vertices(v) {
-	modelToWorld = glm::mat4(1.0f); // Identity Matrix
-	spinning = false;
-	
-	// To store vertex attribute pointer configurations, use vertex array object (VAO)
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// Allocate buffer objects that will store vertices in GPU memory
-	numBuffers = 1;
-	buffers = new GLuint[numBuffers];
-	glGenBuffers(numBuffers, buffers);
-	bufferData(vertices, VERTEX_ATTR_INDEX);
-
-	// Unbind from the VAO.
-	glBindVertexArray(0);
-}
-
-Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n) :vertices(v), normals(n) {
+Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n, 
+	const std::vector<unsigned int>* f) :vertices(v), normals(n), faces(f) {
 	modelToWorld = glm::mat4(1.0f); // Identity Matrix
 	spinning = false;
 
@@ -26,31 +9,30 @@ Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n)
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	// Allocate buffer objects that will store vertices in GPU memory
-	numBuffers = 2;
-	buffers = new GLuint[numBuffers];
-	glGenBuffers(numBuffers, buffers);
-
+	// Allocate buffer objects that will store data in GPU memory
+	glGenBuffers(NUM_BUFFERS, buffers);
 	bufferData(vertices, VERTEX_ATTR_INDEX);
 	bufferData(normals, NORMAL_ATTR_INDEX);
+	bufferData(faces, FACES_ATTR_INDEX);
 
 	// Unbind from the VAO.
 	glBindVertexArray(0);
 }
 
 Object::~Object(){
-	glDeleteBuffers(numBuffers, buffers);
-	delete[] buffers;
+	glDeleteBuffers(NUM_BUFFERS, buffers);
 	glDeleteVertexArrays(1, &vao);
 }
 
-int Object::getNumVertices()
-{
+int Object::getNumVertices() {
 	return vertices->size();
 }
 
-GLuint Object::getVAO()
-{
+int Object::getNumFaces() {
+	return faces->size();
+}
+
+GLuint Object::getVAO() {
 	return vao;
 }
 
@@ -88,6 +70,10 @@ glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
 }
 
+GLuint Object::getFacesEBO() {
+	return buffers[FACES_ATTR_INDEX];
+}
+
 void Object::bufferData(const std::vector<glm::vec3>* data, int index) {
 	// Indicate intent to use this buffer object for attribute data
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[index]);
@@ -103,6 +89,18 @@ void Object::bufferData(const std::vector<glm::vec3>* data, int index) {
 	// Automatically takes data from VBO bound to GL_ARRAY_BUFFER
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(index);
+
 	// Unbind from the VBO.
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Object::bufferData(const std::vector<unsigned int>* data, int index) {
+	// Indicate intent to use this buffer object for element data (indices)
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[index]);
+
+	// Send data to buffer binded to GL_ELEMENT_ARRAY_BUFFER
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * data->size(), data->data(), GL_STATIC_DRAW);
+
+	// Don't unbind from the EBO while VAO is active to link EBO with VAO
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
