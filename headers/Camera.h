@@ -27,7 +27,6 @@ private:
 	glm::mat4 proj;
 
 public:
-	Camera() = default;
 	Camera(int width, int height);
 	~Camera();
 

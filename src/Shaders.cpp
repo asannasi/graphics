@@ -21,9 +21,12 @@ Shaders::Shaders(ShaderFile vertFile, ShaderFile fragFile) {
 		throw std::exception("Shader not linked. Check cerr.");
 	}
 
-	glUseProgram(programID);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+}
+
+void Shaders::load() {
+	glUseProgram(programID);
 }
 
 GLuint Shaders::compileShader(GLenum type, ShaderFile file) {

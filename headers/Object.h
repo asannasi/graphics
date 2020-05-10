@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "ObjFile.h"
+
 class Object
 {
 private:
@@ -37,6 +39,7 @@ public:
 	Object(const std::vector<glm::vec3>* v, 
 		const std::vector<glm::vec3>* n, 
 		const std::vector<unsigned int>* f);
+	Object(ObjFile& objFile);
 	~Object();
 
 	// Getters and Setters
@@ -57,6 +60,5 @@ public:
 	void translate(GLfloat dist, glm::vec3 axis);
 
 	void uniformScale(GLfloat factor);
-
 };
 

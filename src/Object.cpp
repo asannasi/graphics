@@ -19,6 +19,46 @@ Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n,
 	glBindVertexArray(0);
 }
 
+Object::Object(ObjFile& objFile){
+	// Start with an identity matrix
+	modelToWorld = glm::mat4(1.0f);
+
+	// Translate the model so the center is at the origin
+	translate((objFile.minX + objFile.maxX) / 2, glm::vec3(1, 0, 0));
+	translate((objFile.minY + objFile.maxY) / 2, glm::vec3(0, 1, 0));
+	translate((objFile.minZ + objFile.maxZ) / 2, glm::vec3(0, 0, 1));
+
+	// Scale the model so it fits in a 2x2 cube
+	/*
+	glm::vec3 scaleFactor = glm::vec3(
+		1 / glm::max(abs(objFile.maxX), abs(objFile.minX)), 
+		1 / glm::max(abs(objFile.maxY), abs(objFile.minY)), 
+		1 / glm::max(abs(objFile.maxZ), abs(objFile.minZ))
+	);
+	modelToWorld = glm::scale(modelToWorld, scaleFactor);
+	*/
+
+	objFile.normalize();
+
+	spinning = false;
+
+	// To store vertex attribute pointer configurations, use vertex array object (VAO)
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	// Allocate buffer objects that will store data in GPU memory
+	glGenBuffers(NUM_BUFFERS, buffers);
+	vertices = objFile.getVertices();
+	bufferData(vertices, VERTEX_ATTR_INDEX);
+	normals = objFile.getNormals();
+	bufferData(normals, NORMAL_ATTR_INDEX);
+	faces = objFile.getFaces();
+	bufferData(faces, FACES_ATTR_INDEX);
+
+	// Unbind from the VAO.
+	glBindVertexArray(0);
+}
+
 Object::~Object(){
 	glDeleteBuffers(NUM_BUFFERS, buffers);
 	glDeleteVertexArrays(1, &vao);

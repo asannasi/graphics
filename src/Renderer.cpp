@@ -1,9 +1,9 @@
 #include "../headers/Renderer.h"
 
-Renderer::Renderer (ShaderFile vertFile, ShaderFile fragFile, int width, int height) {
-	mode = RenderMode::FULL;
-	shaders = Shaders(vertFile, fragFile);	// Can throw exception
-	camera = Camera(width, height);
+Renderer::Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int height) : 
+	shaders(vertFile, fragFile), camera(width, height) {
+	glEnable(GL_DEPTH_TEST); // enable zbuffer to make sure pixels overlap correctly
+	mode = RenderMode::FULL; // render the full model by default
 	shaders.setUniformProjView(camera.getProjViewMatrix());
 }
 
@@ -24,7 +24,9 @@ void Renderer::render(Object& obj) {
 	// Update the object's model matrix and then pass it to the
 	// shader. Then bind the vao for the object and draw it.
 	obj.update();
+	shaders.load();
 	shaders.setUniformModel(obj.getModelMatrix());
+	shaders.setUniformProjView(camera.getProjViewMatrix());
 	glBindVertexArray(obj.getVAO());
 	// Check rendering mode
 	if (mode == RenderMode::POINTCLOUD) {

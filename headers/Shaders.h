@@ -20,8 +20,8 @@ private:
 	GLuint compileShader(GLenum type, ShaderFile file);
 
 public:
-	Shaders() = default;
 	Shaders(ShaderFile vertFile, ShaderFile fragFile);
+	void load();
 	~Shaders();
 
 	// Functions that find the location of the uniform matrices in the 

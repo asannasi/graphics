@@ -15,19 +15,24 @@ namespace {
 	int windowHeight = 600;
 	const char* windowTitle = "Graphics Project";
 
-	std::string vShaderFilename = ".\\shaders\\vert\\normalsShader.vert";
-	std::string fShaderFilename = ".\\shaders\\frag\\normalsShader.frag";
-	std::string objFilename = "a.obj";
+	std::string vShaderFilenameNorm = ".\\shaders\\vert\\normalsShader.vert";
+	std::string fShaderFilenameNorm = ".\\shaders\\frag\\normalsShader.frag";
+	std::string vShaderFilenameVert = ".\\shaders\\vert\\verticesShader.vert";
+	std::string fShaderFilenameVert = ".\\shaders\\frag\\verticesShader.frag";
 
 	const int numObjects = 2;
+	std::string objFilenames[] = { "a.obj", "sphere.obj" };
+	ObjFile* objFiles[numObjects];
 	Object* objects[numObjects];
+	Object* currObj;
 
 	const float SCALE_FACTOR = 0.5f;
 	const float MOVE_DIST = 1.0f;
 	const float CAMERA_ROTATE_ANG = 45.0f;
 
-	ObjFile* objFile;
-	Renderer* renderer;
+	Renderer* vertRenderer;
+	Renderer* normRenderer;
+	Renderer* currRenderer;
 };
 
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
@@ -42,10 +47,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			switch (key) {
 			// Scale object
 			case(GLFW_KEY_COMMA):
-				objects[0]->uniformScale(SCALE_FACTOR);
+				currObj->uniformScale(SCALE_FACTOR);
 				break;
 			case(GLFW_KEY_PERIOD):
-				objects[0]->uniformScale(1.0f + SCALE_FACTOR);
+				currObj->uniformScale(1.0f + SCALE_FACTOR);
 				break;
 			default:
 				break;
@@ -57,42 +62,54 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				// Close window
 				glfwSetWindowShouldClose(window, GL_TRUE);
 				break;
+			case (GLFW_KEY_F1):
+				currObj = objects[0];
+				break;
+			case (GLFW_KEY_F2):
+				currObj = objects[1];
+				break;
+			case (GLFW_KEY_1):
+				currRenderer = vertRenderer;
+				break;
+			case (GLFW_KEY_2):
+				currRenderer = normRenderer;
+				break;
 			case (GLFW_KEY_P):
 				// Change render mode
-				renderer->setRenderModePointCloud();
+				currRenderer->setRenderModePointCloud();
 				break;
 			case (GLFW_KEY_F):
 				// Change render mode
-				renderer->setRenderModeFull();
+				currRenderer->setRenderModeFull();
 				break;
 			case(GLFW_KEY_R):
 				// Spin object
-				if (objects[0]->isSpinning()) {
-					objects[0]->setSpinning(false);
+				if (currObj->isSpinning()) {
+					currObj->setSpinning(false);
 				}
 				else {
-					objects[0]->setSpinning(true);
+					currObj->setSpinning(true);
 				}
 				break;
 			// Movement Keys WASD
 			case GLFW_KEY_A:
-				objects[0]->translate(MOVE_DIST, glm::vec3(-1, 0, 0));
+				currObj->translate(MOVE_DIST, glm::vec3(-1, 0, 0));
 				break;
 			case GLFW_KEY_D:
-				objects[0]->translate(MOVE_DIST, glm::vec3(1, 0, 0));
+				currObj->translate(MOVE_DIST, glm::vec3(1, 0, 0));
 				break;
 			case GLFW_KEY_W:
-				objects[0]->translate(MOVE_DIST, glm::vec3(0, 1, 0));
+				currObj->translate(MOVE_DIST, glm::vec3(0, 1, 0));
 				break;
 			case GLFW_KEY_S:
-				objects[0]->translate(MOVE_DIST, glm::vec3(0, -1, 0));
+				currObj->translate(MOVE_DIST, glm::vec3(0, -1, 0));
 				break;
 			// Rotate camera
 			case GLFW_KEY_Q:
-				renderer->rotateCameraLeft(CAMERA_ROTATE_ANG);
+				currRenderer->rotateCameraLeft(CAMERA_ROTATE_ANG);
 				break;
 			case GLFW_KEY_E:
-				renderer->rotateCameraRight(CAMERA_ROTATE_ANG);
+				currRenderer->rotateCameraRight(CAMERA_ROTATE_ANG);
 				break;
 			default:
 				break;
@@ -151,36 +168,57 @@ int main(void) {
 	}
 
 	try {
-		// Load shaders and create renderer
-		ShaderFile vertFile = ShaderFile(vShaderFilename);
-		ShaderFile fragFile = ShaderFile(fShaderFilename);
-		renderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
+		// Load simple shaders and create renderer
+		ShaderFile vertFile = ShaderFile(vShaderFilenameVert);
+		ShaderFile fragFile = ShaderFile(fShaderFilenameVert);
+		vertRenderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
+		
+		// Load shaders with normal coloring and create renderer
+		vertFile = ShaderFile(vShaderFilenameNorm);
+		fragFile = ShaderFile(fShaderFilenameNorm);
+		normRenderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
+
 		// Load vertices from obj file
-		objFile = new ObjFile(objFilename);
+		objFiles[0] = new ObjFile(objFilenames[0]);
+		objFiles[1] = new ObjFile(objFilenames[1]);
 	}
 	catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
+		delete vertRenderer;
+		delete normRenderer;
+		delete objFiles[0];
+		delete objFiles[1];
 		glfwDestroyWindow(window); // destroys specified window
 		glfwTerminate(); // destroys all windows
 		return EXIT_FAILURE;
 	}
+	
+	// Initialize objects from points data
+	objects[0] = new Object(*objFiles[0]);
+	objects[1] = new Object(*objFiles[1]);
 
-	Object dragon = Object(objFile->getVertices(), objFile->getNormals(), objFile->getFaces());
-	objects[0] = &dragon;
+	// Set the current state
+	currObj = objects[0];
+	currRenderer = normRenderer;
 
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		renderer->render(dragon);
+		currRenderer->render(*objects[0]);
+		currRenderer->render(*objects[1]);
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
 	}
 
 	// Deallocate resources:
 	// Unbind the VBO and VAO and free them
-	delete renderer;
-	delete objFile;
+	delete vertRenderer;
+	delete normRenderer;
+	delete objFiles[0];
+	delete objFiles[1];
+	delete objects[0];
+	delete objects[1];
 	glfwDestroyWindow(window); // destroys specified window
 	glfwTerminate(); // destroys all windows
 
