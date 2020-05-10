@@ -4,6 +4,8 @@ This project is meant to further my personal self-studying of computer
 graphics. Currently, it parses object files and displays static pointclouds 
 after transforming them into clip space from model space. 
 
+![Demo](./sphere.PNG)
+
 ## How to run
 
 This project uses openGL 3.3. It was developed in Visual Studio 2019 with 
