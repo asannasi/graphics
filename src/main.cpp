@@ -76,11 +76,11 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				break;
 			case (GLFW_KEY_P):
 				// Change render mode
-				currRenderer->setRenderModePointCloud();
+				currObj->setDrawModePointCloud();
 				break;
 			case (GLFW_KEY_F):
 				// Change render mode
-				currRenderer->setRenderModeFull();
+				currObj->setDrawModeFull();
 				break;
 			case(GLFW_KEY_R):
 				// Spin object

@@ -22,12 +22,12 @@ Object::Object(const std::vector<glm::vec3>* v, const std::vector<glm::vec3>* n,
 Object::Object(ObjFile& objFile){
 	// Start with an identity matrix
 	modelToWorld = glm::mat4(1.0f);
-
+	
 	// Translate the model so the center is at the origin
 	translate((objFile.minX + objFile.maxX) / 2, glm::vec3(1, 0, 0));
 	translate((objFile.minY + objFile.maxY) / 2, glm::vec3(0, 1, 0));
 	translate((objFile.minZ + objFile.maxZ) / 2, glm::vec3(0, 0, 1));
-
+	
 	// Scale the model so it fits in a 2x2 cube
 	/*
 	glm::vec3 scaleFactor = glm::vec3(
@@ -64,22 +64,23 @@ Object::~Object(){
 	glDeleteVertexArrays(1, &vao);
 }
 
-int Object::getNumVertices() {
-	return vertices->size();
-}
-
-int Object::getNumFaces() {
-	return faces->size();
-}
-
-GLuint Object::getVAO() {
-	return vao;
-}
-
 void Object::update() {
 	if (spinning) {
 		rotate(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
+}
+
+void Object::draw() {
+	glBindVertexArray(vao);
+	// Check rendering mode
+	if (drawMode == DrawMode::POINTCLOUD) {
+		glDrawArrays(GL_POINTS, 0, vertices->size());
+	}
+	else {
+		glDrawElements(GL_TRIANGLES, faces->size(), GL_UNSIGNED_INT, 0);
+	}
+	// Unbind VAO
+	glBindVertexArray(0);
 }
 
 void Object::setSpinning(bool spin) {
@@ -108,10 +109,6 @@ void Object::uniformScale(GLfloat factor) {
 
 glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
-}
-
-GLuint Object::getFacesEBO() {
-	return buffers[FACES_ATTR_INDEX];
 }
 
 void Object::bufferData(const std::vector<glm::vec3>* data, int index) {
@@ -143,4 +140,12 @@ void Object::bufferData(const std::vector<unsigned int>* data, int index) {
 
 	// Don't unbind from the EBO while VAO is active to link EBO with VAO
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Object::setDrawModePointCloud() {
+	drawMode = DrawMode::POINTCLOUD;
+}
+
+void Object::setDrawModeFull() {
+	drawMode = DrawMode::FULL;
 }

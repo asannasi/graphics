@@ -35,6 +35,9 @@ private:
 	void bufferData(const std::vector<glm::vec3>* data, int index);
 	void bufferData(const std::vector<unsigned int>* data, int index);
 
+	// Render a pointcloud or object
+	enum class DrawMode { POINTCLOUD, FULL } drawMode = DrawMode::FULL;
+
 public:
 	Object(const std::vector<glm::vec3>* v, 
 		const std::vector<glm::vec3>* n, 
@@ -43,15 +46,15 @@ public:
 	~Object();
 
 	// Getters and Setters
-	GLuint getVAO();
-	int getNumVertices();
-	int getNumFaces();
 	void setSpinning(bool spin);
 	bool isSpinning();
 	glm::mat4& getModelMatrix();
-	GLuint getFacesEBO();
+
+	void setDrawModePointCloud();
+	void setDrawModeFull();
 
 	void update(); // updates model if in moving state
+	void draw(); // draws model on screen
 
 	// rotates model along specified axis by given degrees
 	void rotate(float deg, glm::vec3 axis);
