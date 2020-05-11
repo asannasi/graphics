@@ -8,7 +8,7 @@ ShaderFile::ShaderFile(std::string fileName) {
 	while (fStream.is_open() && fStream.good()){
 		std::string line = "";
 		getline(fStream, line);
-		shaderCode += "\n" + line;
+		code += "\n" + line;
 	}
 	fStream.close();
 }
@@ -16,5 +16,5 @@ ShaderFile::ShaderFile(std::string fileName) {
 ShaderFile::~ShaderFile() { }
 
 const std::string* ShaderFile::getCode() {
-	return &shaderCode;
+	return &code;
 }

@@ -21,20 +21,21 @@ Shaders::Shaders(ShaderFile vertFile, ShaderFile fragFile) {
 		throw std::exception("Shader not linked. Check cerr.");
 	}
 
+	// Individual shaders are no longer needed
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 }
 
-void Shaders::load() {
-	glUseProgram(programID);
+Shaders::~Shaders() {
+	glDeleteProgram(programID);
 }
 
 GLuint Shaders::compileShader(GLenum type, ShaderFile file) {
-	// Get ref id for shader object
 	GLuint id = glCreateShader(type);
 	const char* code = file.getCode()->c_str();
 	glShaderSource(id, 1, &code, NULL);
 	glCompileShader(id);
+
 	// If compilation failed, throw exception and print compile errors
 	int compileSuccess;
 	char infoLogBuffer[INFO_LOG_BUFFER_SIZE];
@@ -44,11 +45,12 @@ GLuint Shaders::compileShader(GLenum type, ShaderFile file) {
 		std::cerr << infoLogBuffer << std::endl;
 		throw std::exception("Shader not compiled. Check cerr.");
 	}
+
 	return id;
 }
 
-Shaders::~Shaders() {
-	glDeleteProgram(programID);
+void Shaders::load() {
+	glUseProgram(programID);
 }
 
 void Shaders::setUniformModel(glm::mat4 &model) {

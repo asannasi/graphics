@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -12,56 +11,65 @@
 class Object
 {
 private:
-	// Where translation values are in the model matrix
+	// Where translation values reside in the model matrix
 	static const int TRANSLATION_INDEX = 3;
 
-	static const int NUM_BUFFERS = 3; // Total number of buffer object id's
-
-	// Match the attribute index locations with those defined in the shader
+	// Matches the attribute index locations with those defined in the shader
 	static const int VERTEX_ATTR_INDEX = 0;
 	static const int NORMAL_ATTR_INDEX = 1;
 	static const int FACES_ATTR_INDEX = 2;
 
-	const std::vector<glm::vec3>* vertices; // list of vertices
-	const std::vector<glm::vec3>* normals; // list of normals
-	const std::vector<unsigned int>* faces; // list of faces
+	const std::vector<glm::vec3>* vertices;
+	const std::vector<glm::vec3>* normals;
+	const std::vector<unsigned int>* faces;
 
-	GLuint buffers[NUM_BUFFERS]; // vertex buffer object ids
+	// Object States
+	//
+	glm::mat4 modelToWorld = glm::mat4(1.0f); // Where model is in world space
+	bool spinning = false;
+	enum class DrawMode { POINTCLOUD, MESH } drawMode = DrawMode::MESH;
 
-	glm::mat4 modelToWorld; // changes model coordinates to world space
-	GLuint vao; // vertex attribute object id
-	bool spinning; // Whether the model should spin
+	// Vertex attribute object ID. 
+	// The VAO stores the state for the Object like buffers and 
+	// how to interpret the data stored in them.
+	GLuint vao;
 
+	// Buffer object ID's.
+	// Includes both vertex and element buffers.
+	static const int NUM_BUFFERS = 3;
+	GLuint buffers[NUM_BUFFERS];
+
+	// Helper methods for buffering data into vertex and element buffers
 	void bufferData(const std::vector<glm::vec3>* data, int index);
 	void bufferData(const std::vector<unsigned int>* data, int index);
 
-	// Render a pointcloud or object
-	enum class DrawMode { POINTCLOUD, FULL } drawMode = DrawMode::FULL;
+	// Rotates model along specified axis by given degrees
+	void rotate(float deg, glm::vec3 axis);
 
 public:
-	Object(const std::vector<glm::vec3>* v, 
-		const std::vector<glm::vec3>* n, 
-		const std::vector<unsigned int>* f);
+	Object() = default;
 	Object(ObjFile& objFile);
 	~Object();
 
-	// Getters and Setters
-	void setSpinning(bool spin);
-	bool isSpinning();
 	glm::mat4& getModelMatrix();
 
+	bool isSpinning();
+	void setSpinning(bool spinning);
+
 	void setDrawModePointCloud();
-	void setDrawModeFull();
+	void setDrawModeMesh();
 
-	void update(); // updates model if in moving state
-	void draw(); // draws model on screen
-
-	// rotates model along specified axis by given degrees
-	void rotate(float deg, glm::vec3 axis);
-	// translates model independent of other transformations
-	// and cumatively for past translations
+	// Translates model independent of other transformations
+	// and cumalatively with past translations.
 	void translate(GLfloat dist, glm::vec3 axis);
 
+	// Scales model cumalatively with past transformations
 	void uniformScale(GLfloat factor);
+
+	// Updates object for next frame
+	void update(); 
+
+	// Draws model on the screen
+	void draw(); 
 };
 

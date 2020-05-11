@@ -1,12 +1,15 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <string>
 
 #include "ShaderFile.h"
 
+/*
+ * This class compiles the given shader code and loads the compiled shader 
+ * program into the GPU. It is also the interface for setting shader 
+ * uniform values.
+ */
 class Shaders
 {
 private:
@@ -21,11 +24,13 @@ private:
 
 public:
 	Shaders(ShaderFile vertFile, ShaderFile fragFile);
-	void load();
 	~Shaders();
 
+	// Loads the compiled shader program into the GPU
+	void load();
+
 	// Functions that find the location of the uniform matrices in the 
-	// shader program and sets them to the parameter's value
+	// shader program and sets them to the parameter's value.
 	void setUniformModel(glm::mat4& model);
 	void setUniformView(glm::mat4& view);
 	void setUniformProj(glm::mat4& proj);

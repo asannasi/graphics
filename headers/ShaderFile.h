@@ -4,12 +4,19 @@
 #include <iostream>
 #include <fstream>
 
+/*
+ * Parses the code in a shader GLSL file into a string.
+ */
 class ShaderFile {
 private:
-	std::string shaderCode;
+	// Code in the shader file stored as a string
+	std::string code;
 
 public:
+	// Create a string from the file contents
 	ShaderFile(std::string fileName);
+
 	~ShaderFile();
+
 	const std::string* getCode();
 };
