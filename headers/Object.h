@@ -43,9 +43,6 @@ private:
 	void bufferData(const std::vector<glm::vec3>* data, int index);
 	void bufferData(const std::vector<unsigned int>* data, int index);
 
-	// Rotates model along specified axis by given degrees
-	void rotate(float deg, glm::vec3 axis);
-
 public:
 	Object() = default;
 	Object(ObjFile& objFile);
@@ -65,6 +62,9 @@ public:
 
 	// Scales model cumalatively with past transformations
 	void uniformScale(GLfloat factor);
+
+	// Rotates model along specified axis by given degrees
+	void rotate(float deg, glm::vec3 axis);
 
 	// Updates object for next frame
 	void update(); 

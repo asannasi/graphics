@@ -57,6 +57,10 @@ public:
 	const std::vector<glm::vec3>* getColors();
 	const std::vector<glm::vec3>* getNormals();
 	const std::vector<unsigned int>* getFaces();
+
+	// Combines max and min values into 3D vectors
+	glm::vec3 getMaxVertVals();
+	glm::vec3 getMinVertVals();
 	
 	// Normalizes vertices into a range of [-1,1]
 	void normalize();

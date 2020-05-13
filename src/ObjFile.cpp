@@ -91,6 +91,14 @@ const std::vector<unsigned int>* ObjFile::getFaces() {
 	return &faces;
 }
 
+glm::vec3 ObjFile::getMaxVertVals() {
+	return glm::vec3(maxVertX, maxVertY, maxVertZ);
+}
+
+glm::vec3 ObjFile::getMinVertVals() {
+	return glm::vec3(minVertX, minVertY, minVertZ);
+}
+
 // Normalizes a value to range [-1, 1] using max and min of all values in
 // the wanted dimension
 float normalizeValue(float value, float max, float min) {

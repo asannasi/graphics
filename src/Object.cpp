@@ -2,19 +2,11 @@
 
 Object::Object(ObjFile& objFile){
 	// Translate the model so the center is at the origin
-	//translate((objFile.minVertX + objFile.maxVertX) / 2, glm::vec3(1, 0, 0));
-	//translate((objFile.minVertY + objFile.maxVertY) / 2, glm::vec3(0, 1, 0));
-	//translate((objFile.minVertZ + objFile.maxVertZ) / 2, glm::vec3(0, 0, 1));
-	
-	// Scale the model so it fits in a 2x2 cube
-	/*
-	glm::vec3 scaleFactor = glm::vec3(
-		1 / glm::max(abs(objFile.maxX), abs(objFile.minX)), 
-		1 / glm::max(abs(objFile.maxY), abs(objFile.minY)), 
-		1 / glm::max(abs(objFile.maxZ), abs(objFile.minZ))
-	);
-	modelToWorld = glm::scale(modelToWorld, scaleFactor);
-	*/
+	glm::vec3 minVertVals = objFile.getMinVertVals();
+	glm::vec3 maxVertVals = objFile.getMaxVertVals();
+	translate((minVertVals[0] + maxVertVals[0]) / 2, glm::vec3(1, 0, 0));
+	translate((minVertVals[1] + maxVertVals[1]) / 2, glm::vec3(0, 1, 0));
+	translate((minVertVals[2] + maxVertVals[2]) / 2, glm::vec3(0, 0, 1));
 
 	objFile.normalize();
 
@@ -71,11 +63,6 @@ void Object::bufferData(const std::vector<unsigned int>* data, int index) {
 	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Object::rotate(float deg, glm::vec3 axis) {
-	// Update the model matrix by multiplying a rotation matrix
-	modelToWorld = glm::rotate(modelToWorld, glm::radians(deg), axis);
-}
-
 glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
 }
@@ -105,6 +92,11 @@ void Object::translate(GLfloat dist, glm::vec3 axis) {
 void Object::uniformScale(GLfloat factor) {
 	glm::vec3 scaleFactor = glm::vec3(factor, factor, factor);
 	modelToWorld = glm::scale(modelToWorld, scaleFactor);
+}
+
+void Object::rotate(float deg, glm::vec3 axis) {
+	// Update the model matrix by multiplying a rotation matrix
+	modelToWorld = glm::rotate(modelToWorld, glm::radians(deg), axis);
 }
 
 void Object::update() {
