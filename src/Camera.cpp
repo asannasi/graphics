@@ -1,8 +1,8 @@
 #include "../headers/Camera.h"
 
-Camera::Camera(int width, int height) {
+Camera::Camera(int windowWidth, int windowHeight) {
 	view = glm::lookAt(position, target, up);
-	setAspectRatio(width, height);
+	setAspectRatio(windowWidth, windowHeight);
 }
 
 Camera::~Camera() {}
@@ -15,8 +15,8 @@ glm::mat4& Camera::getProjViewMatrix() {
 	return projView;
 }
 
-void Camera::setAspectRatio(int width, int height) {
-	aspectRatio = (float)width / (float)height;
+void Camera::setAspectRatio(int windowWidth, int windowHeight) {
+	aspectRatio = (float)windowWidth / (float)windowHeight;
 	proj = glm::perspective(fieldOfView, aspectRatio, near, far);
 	updateProjView();
 }

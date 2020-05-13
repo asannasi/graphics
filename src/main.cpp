@@ -6,14 +6,12 @@
 
 namespace {
 	// OpenGL version MAJOR.MINOR (i.e. 3.3)
-	constexpr int MAJOR_VERSION = 3;
-	constexpr int MINOR_VERSION = 3;
+	const int MAJOR_VERSION = 3;
+	const int MINOR_VERSION = 3;
 
 	// Set window properties
 	int windowWidth = 800;
 	int windowHeight = 600;
-	int midWindowWidth = windowWidth / 2;
-	int midWindowHeight = windowHeight / 2;
 	const char* windowTitle = "Graphics Project";
 
 	// Constants for object manipulation
@@ -49,18 +47,16 @@ namespace {
 	Object* currObj;
 	Renderer* currRenderer;
 
-	bool mouseIsDragging = false;
-	glm::vec3 prevMouseVec;
-	const float MOUSE_DRAG_THRESHOLD = 0.01;
-	const int MOUSE_DRAG_ROTATE_FACTOR = 30;
+	const float MOUSE_DRAG_THRESHOLD = 0.05f;
+	const int MOUSE_DRAG_ROTATE_FACTOR = 90;
+	Mouse* mouse;
 };
 
 // Tell openGL the new window dimensions.
 // It can be different from GLFW's.
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-	midWindowWidth = windowWidth / 2;
-	midWindowHeight = windowHeight / 2;
+	mouse->updateWindowSize(width, height);
 }
 
 // This function defines how users interact with program through key presses
@@ -147,48 +143,16 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	} // end of IF checking key press
 }
 
-// This function changes the mouse position on the screen into
-// coordinates on a virtual 3D sphere for rotation. The mouse
-// position coordinates start from the upper left of the screen
-// and range x:[0, windowWidth] and y:[0, windowHeight].
-glm::vec3 mousePosToSphereVector(double& x, double& y) {
-	x = x - midWindowWidth;
-	y = (y - midWindowHeight) * -1;
-	double z = glm::sqrt(glm::pow(windowHeight, 2) - glm::pow(y, 2));
-	return glm::vec3(x, y, z);
-}
-
-// This function rotates the current object when the mouse drags
-// on the screen. The starting point and end point are used to 
-// calculate the magnitude of the rotation and the axis.
-void rotateCurrObjWithMouse(GLFWwindow* window) {
-	double endX = 0;
-	double endY = 0;
-	glfwGetCursorPos(window, &endX, &endY);
-	glm::vec3 endVec = mousePosToSphereVector(endX, endY);
-	glm::vec3 rotationAxis = glm::normalize(glm::cross(prevMouseVec, endVec));
-	float deg = glm::angle(glm::normalize(prevMouseVec), glm::normalize(endVec));
-	if (deg > MOUSE_DRAG_THRESHOLD) {
-		currObj->rotate(MOUSE_DRAG_ROTATE_FACTOR * deg, rotationAxis);
-		prevMouseVec = endVec;
-	}
-}
-
-// Figures out if the user is dragging the mouse on the screen.
+// Call the corresponding Mouse object methods
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-	// Window coordinates range
 	if (action == GLFW_PRESS) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
-			mouseIsDragging = true;
-			double startX = 0;
-			double startY = 0;
-			glfwGetCursorPos(window, &startX, &startY);
-			prevMouseVec = mousePosToSphereVector(startX, startY);
+			mouse->leftButtonPress(window);
 		}
 	}
 	else if (action == GLFW_RELEASE) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
-			mouseIsDragging = false;
+			mouse->leftButtonRelease();
 		}
 	}
 }
@@ -213,8 +177,7 @@ int main(void) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create GLFW window, which encapsulates a window and openGL context
-	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, 
-										  windowTitle, NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
 	if (!window) {
 		std::cerr << "Failed to initialize GLFW window" << std::endl;
 		glfwTerminate();
@@ -225,7 +188,7 @@ int main(void) {
 	// A context stores openGL's state and is thread-local.
 	glfwMakeContextCurrent(window);
 
-	// Set callback functions for 
+	// Set callback functions
 	glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
@@ -275,11 +238,21 @@ int main(void) {
 	currObj = objects[0];
 	currRenderer = normRenderer;
 
+	mouse = new Mouse(windowWidth, windowHeight, 
+		MOUSE_DRAG_THRESHOLD, MOUSE_DRAG_ROTATE_FACTOR);
+
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		if (mouseIsDragging) {
-			rotateCurrObjWithMouse(window);
+
+		// Dragging the mouse should rotate the current object
+		if (mouse->isDragging()) {
+			float deg = 0.0f;
+			glm::vec3 rotationAxis;
+			bool infoIsValid = mouse->calcRotationInfoForDrag(window, deg, rotationAxis);
+			if (infoIsValid) {
+				currObj->rotate(deg, rotationAxis);
+			}
 		}
 
 		for (int i = 0; i < NUM_OBJECTS; ++i) {
@@ -293,6 +266,7 @@ int main(void) {
 	}
 
 	// End of program so deallocate resources
+	delete mouse;
 	delete vertRenderer;
 	delete normRenderer;
 	for (int i = 0; i < NUM_OBJECTS; i++) {

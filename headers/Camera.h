@@ -25,13 +25,13 @@ private:
 	inline void updateProjView(); // Recalculates proj*view
 
 public:
-	Camera(int width, int height);
+	Camera(int windowWidth, int windowHeight);
 	~Camera();
 
 	glm::mat4& getProjViewMatrix();
 
 	// Calculates new aspect ratio and updates proj matrix
-	void setAspectRatio(int width, int height);
+	void setAspectRatio(int windowWidth, int windowHeight);
 
 	// Rotates camera along axis for given degrees by updated view matrix
 	void rotate(float deg, glm::vec3 axis);
