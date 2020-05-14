@@ -35,6 +35,12 @@ namespace {
 	Renderer* vertRenderer;
 	Renderer* normRenderer;
 
+	const float MOUSE_DRAG_THRESHOLD = 0.05f;
+	const float MOUSE_DRAG_ROTATE_FACTOR = 90.0f;
+	const float MOUSE_DRAG_TRANSLATE_FACTOR = 0.01f;
+	MouseButton* leftMouseButton;
+	MouseButton* rightMouseButton;
+
 	const int NUM_OBJECTS = 2;
 	Object* objects[NUM_OBJECTS];
 
@@ -46,17 +52,13 @@ namespace {
 	// controllable by keys
 	Object* currObj;
 	Renderer* currRenderer;
-
-	const float MOUSE_DRAG_THRESHOLD = 0.05f;
-	const int MOUSE_DRAG_ROTATE_FACTOR = 90;
-	Mouse* mouse;
 };
 
 // Tell openGL the new window dimensions.
 // It can be different from GLFW's.
 void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-	mouse->updateWindowSize(width, height);
+	leftMouseButton->updateWindowSize(width, height);
 }
 
 // This function defines how users interact with program through key presses
@@ -147,12 +149,18 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (action == GLFW_PRESS) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
-			mouse->leftButtonPress(window);
+			leftMouseButton->press(window);
+		}
+		else if(button == GLFW_MOUSE_BUTTON_RIGHT) {
+			rightMouseButton->press(window);
 		}
 	}
 	else if (action == GLFW_RELEASE) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT) {
-			mouse->leftButtonRelease();
+			leftMouseButton->release();
+		}
+		else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+			rightMouseButton->release();
 		}
 	}
 }
@@ -238,23 +246,30 @@ int main(void) {
 	currObj = objects[0];
 	currRenderer = normRenderer;
 
-	mouse = new Mouse(windowWidth, windowHeight, 
-		MOUSE_DRAG_THRESHOLD, MOUSE_DRAG_ROTATE_FACTOR);
+	leftMouseButton = new MouseButton(windowWidth, windowHeight, 
+		MOUSE_DRAG_THRESHOLD, MOUSE_DRAG_ROTATE_FACTOR, MOUSE_DRAG_TRANSLATE_FACTOR);
+	rightMouseButton = new MouseButton(windowWidth, windowHeight,
+		MOUSE_DRAG_THRESHOLD, MOUSE_DRAG_ROTATE_FACTOR, MOUSE_DRAG_TRANSLATE_FACTOR);
 
 	// Keep running until the window is told to close
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Dragging the mouse should rotate the current object
-		if (mouse->isDragging()) {
-			float deg = 0.0f;
-			glm::vec3 rotationAxis;
-			bool infoIsValid = mouse->calcRotationInfoForDrag(window, deg, rotationAxis);
-			if (infoIsValid) {
-				currObj->rotate(deg, rotationAxis);
-			}
+		// Dragging the left mouse button should rotate the current object
+		float magnitude = 0.0f;
+		glm::vec3 axis;
+		bool infoIsValid = leftMouseButton->calcDragRotationInfo(window, magnitude, axis);
+		if (infoIsValid) {
+			currObj->rotate(magnitude, axis);
 		}
-
+				
+		// Dragging the right mouse button should translate the current object
+		infoIsValid = rightMouseButton->calcDragTranslationInfo(window, magnitude, axis);
+		if (infoIsValid) {
+			currObj->translate(magnitude, axis);
+		}
+		
+		// Update and render objects
 		for (int i = 0; i < NUM_OBJECTS; ++i) {
 			objects[i]->update();
 			currRenderer->render(*objects[i]);
@@ -266,7 +281,7 @@ int main(void) {
 	}
 
 	// End of program so deallocate resources
-	delete mouse;
+	delete leftMouseButton;
 	delete vertRenderer;
 	delete normRenderer;
 	for (int i = 0; i < NUM_OBJECTS; i++) {
