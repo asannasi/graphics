@@ -25,6 +25,5 @@ public:
 
 	void setAspectRatio(int width, int height);
 	void render(Object& obj);
-	void render(Cube& cube);
 	void rotateCamera(float deg, glm::vec3& axis);
 };

@@ -18,14 +18,8 @@ void Renderer::render(Object& obj) {
 	shaders.load();
 	shaders.setUniformModel(obj.getModelMatrix());
 	shaders.setUniformProjView(camera.getProjViewMatrix());
+	shaders.setUniformColor(obj.getColor());
 	obj.draw();
-}
-
-void Renderer::render(Cube& cube) {
-	shaders.load();
-	shaders.setUniformModel(cube.getModelMatrix());
-	shaders.setUniformProjView(camera.getProjViewMatrix());
-	cube.draw();
 }
 
 void Renderer::rotateCamera(float deg, glm::vec3& axis) {

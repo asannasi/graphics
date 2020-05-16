@@ -14,6 +14,9 @@ namespace {
 	int windowHeight = 600;
 	const char* windowTitle = "Graphics Project";
 
+	// Colors
+	const glm::vec3 BLUE = glm::vec3(0.0, 0.0, 1.0);
+
 	// Constants for object manipulation
 	const float SCALE_FACTOR = 0.5f;
 	const float MOVE_DIST = 1.0f;
@@ -202,7 +205,7 @@ int main(void) {
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
 	// Set window's background default color
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
 	// Initialize GLEW, which is a library that checks supported openGL 
 	// extensions at runtime on the target platform. Check if glew was
@@ -238,9 +241,9 @@ int main(void) {
 		return EXIT_FAILURE;
 	}
 	
-	objects[0] = new Object(objFiles[0]);
-	objects[1] = new Object(objFiles[1]);
-	Cube* c = new Cube(1.0f);
+	objects[0] = new Object(objFiles[0], BLUE);
+	objects[1] = new Object(objFiles[1], BLUE);
+	Cube* c = new Cube(1.0f, BLUE);
 
 	// Set the current state
 	currObj = objects[0];
@@ -270,7 +273,7 @@ int main(void) {
 		}
 		
 		// Update and render objects
-		for (int i = 0; i < NUM_OBJECTS; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			objects[i]->update();
 			currRenderer->render(*objects[i]);
 		}

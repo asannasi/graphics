@@ -1,6 +1,6 @@
 #include "../headers/Object.h"
 
-Object::Object(ObjFile& objFile){
+Object::Object(ObjFile& objFile, glm::vec3 color) : color(color) {
 	// Translate the model so the center is at the origin
 	glm::vec3 minVertVals = objFile.getMinVertVals();
 	glm::vec3 maxVertVals = objFile.getMaxVertVals();
@@ -65,6 +65,10 @@ void Object::bufferData(const std::vector<unsigned int>* data, int index) {
 
 glm::mat4& Object::getModelMatrix() {
 	return modelToWorld;
+}
+
+glm::vec3& Object::getColor() {
+	return color;
 }
 
 bool Object::isSpinning() {

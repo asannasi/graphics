@@ -23,6 +23,8 @@ private:
 	const std::vector<glm::vec3>* normals;
 	const std::vector<unsigned int>* faces;
 
+	glm::vec3 color;
+
 	// Object States
 	//
 	glm::mat4 modelToWorld = glm::mat4(1.0f); // Where model is in world space
@@ -45,10 +47,11 @@ private:
 
 public:
 	Object() = default;
-	Object(ObjFile& objFile);
+	Object(ObjFile& objFile, glm::vec3 color);
 	~Object();
 
 	glm::mat4& getModelMatrix();
+	glm::vec3& getColor();
 
 	bool isSpinning();
 	void setSpinning(bool spinning);
@@ -70,6 +73,7 @@ public:
 	void update(); 
 
 	// Draws model on the screen
-	void draw(); 
+	virtual void draw(); 
+
 };
 

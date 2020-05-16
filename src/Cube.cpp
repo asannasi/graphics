@@ -1,6 +1,6 @@
 #include "../headers/Cube.h"
 
-Cube::Cube(float length) {
+Cube::Cube(float length, glm::vec3 color) : color(color) {
 	vertices.push_back(glm::vec3(-1.0f, 1.0f, 1.0f));
 	vertices.push_back(glm::vec3(1.0f, -1.0f, 1.0f));
 	vertices.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));
@@ -33,17 +33,10 @@ Cube::~Cube() {
 	glDeleteVertexArrays(1, &vao);
 }
 
-const std::vector<glm::vec3>* Cube::getVertices() {
-	return &vertices;
-}
-
-glm::mat4& Cube::getModelMatrix() {
-	return modelToWorld;
-}
-
 void Cube::draw() {
 	glBindVertexArray(vao);
 	glPointSize(10.0f);
 	glDrawArrays(GL_POINTS, 0, vertices.size());
 	glBindVertexArray(0);
+	glPointSize(1.0f);
 }

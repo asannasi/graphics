@@ -68,7 +68,12 @@ void Shaders::setUniformProj(glm::mat4& proj) {
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 }
 
-void Shaders::setUniformProjView(glm::mat4 projView) {
+void Shaders::setUniformProjView(glm::mat4& projView) {
 	int projViewLoc = glGetUniformLocation(programID, "projView");
 	glUniformMatrix4fv(projViewLoc, 1, GL_FALSE, glm::value_ptr(projView));
+}
+
+void Shaders::setUniformColor(glm::vec3& color) {
+	int colorLoc = glGetUniformLocation(programID, "color");
+	glUniform3fv(colorLoc, 1, glm::value_ptr(color));
 }
