@@ -29,14 +29,17 @@ namespace {
 	glm::vec3 RIGHT = glm::vec3(1, 0, 0);
 
 	// Filenames of shader sets (vertex shader & fragment shader)
+	std::string vShaderFilenameLight = ".\\shaders\\vert\\lightingShader.vert";
+	std::string fShaderFilenameLight = ".\\shaders\\frag\\lightingShader.frag";
 	std::string vShaderFilenameNorm = ".\\shaders\\vert\\normalsShader.vert";
 	std::string fShaderFilenameNorm = ".\\shaders\\frag\\normalsShader.frag";
 	std::string vShaderFilenameVert = ".\\shaders\\vert\\verticesShader.vert";
 	std::string fShaderFilenameVert = ".\\shaders\\frag\\verticesShader.frag";
 	
 	// Renderers for each shader set
-	Renderer* vertRenderer;
+	Renderer* lightRenderer;
 	Renderer* normRenderer;
+	Renderer* vertRenderer;
 
 	const float MOUSE_DRAG_THRESHOLD = 0.05f;
 	const float MOUSE_DRAG_ROTATE_FACTOR = 90.0f;
@@ -229,6 +232,11 @@ int main(void) {
 		fragFile = ShaderFile(fShaderFilenameNorm);
 		normRenderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
 
+		// Load shaders with lighting and create renderer
+		vertFile = ShaderFile(vShaderFilenameLight);
+		fragFile = ShaderFile(fShaderFilenameLight);
+		lightRenderer = new Renderer(vertFile, fragFile, windowWidth, windowHeight);
+
 		objFiles[0] = ObjFile(objFilenames[0]);
 		objFiles[1] = ObjFile(objFilenames[1]);
 	}
@@ -247,7 +255,7 @@ int main(void) {
 
 	// Set the current state
 	currObj = objects[0];
-	currRenderer = normRenderer;
+	currRenderer = lightRenderer;
 
 	leftMouseButton = new MouseButton(windowWidth, windowHeight, 
 		MOUSE_DRAG_THRESHOLD, MOUSE_DRAG_ROTATE_FACTOR, MOUSE_DRAG_TRANSLATE_FACTOR);

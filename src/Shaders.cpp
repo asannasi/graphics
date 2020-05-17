@@ -77,3 +77,11 @@ void Shaders::setUniformColor(glm::vec3& color) {
 	int colorLoc = glGetUniformLocation(programID, "color");
 	glUniform3fv(colorLoc, 1, glm::value_ptr(color));
 }
+
+void Shaders::setUniformLight() {
+	int lightColorLoc = glGetUniformLocation(programID, "lightColor");
+	glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+
+	int lightPosLoc = glGetUniformLocation(programID, "lightPos");
+	glUniform3fv(lightPosLoc, 1, glm::value_ptr(glm::vec3(0,0, 5)));
+}

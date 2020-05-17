@@ -19,6 +19,7 @@ void Renderer::render(Object& obj) {
 	shaders.setUniformModel(obj.getModelMatrix());
 	shaders.setUniformProjView(camera.getProjViewMatrix());
 	shaders.setUniformColor(obj.getColor());
+	shaders.setUniformLight();
 	obj.draw();
 }
 

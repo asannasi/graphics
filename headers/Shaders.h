@@ -36,4 +36,5 @@ public:
 	void setUniformProj(glm::mat4& proj);
 	void setUniformProjView(glm::mat4& ProjView);
 	void setUniformColor(glm::vec3& color);
+	void setUniformLight();
 };
