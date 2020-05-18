@@ -12,8 +12,10 @@ out vec4 fragColor;
 
 void main(){
 	vec3 norm = normalize(normal);
-	vec3 lightVec = normalize(lightPos - fragPos);
-	vec3 diffuse = lightColor * (max(dot(norm, lightVec), 0.0f));
+	vec3 diff = lightPos - fragPos;
+	vec3 lightVec = normalize(diff);
+	float attenuation = pow(1/length(diff), 2) * 0.001f;
+	vec3 diffuse = attenuation * lightColor * (max(dot(norm, lightVec), 0.0f));
 
 	vec3 viewVec = normalize(viewerPos - fragPos);
 	vec3 reflectVec = reflect(-lightVec, norm);  
