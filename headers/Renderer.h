@@ -3,7 +3,7 @@
 #include "Shaders.h"
 #include "Camera.h"
 #include "Object.h"
-#include "Cube.h"
+#include "Light.h"
 
 /*
  * This class is responsible for rendering objects with the latest shader
@@ -21,9 +21,9 @@ private:
 public:
 	// Constructor can throw an exception if shaders could not be compiled
 	Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int height);
-	~Renderer();
 
 	void setAspectRatio(int width, int height);
 	void render(Object& obj);
+	void render(Object& obj, PointLight& light);
 	void rotateCamera(float deg, glm::vec3& axis);
 };

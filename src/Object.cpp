@@ -4,10 +4,12 @@ Object::Object(ObjFile& objFile, glm::vec3 color) : color(color) {
 	// Translate the model so the center is at the origin
 	glm::vec3 minVertVals = objFile.getMinVertVals();
 	glm::vec3 maxVertVals = objFile.getMaxVertVals();
-	translate((minVertVals[0] + maxVertVals[0]) / 2, glm::vec3(1, 0, 0));
-	translate((minVertVals[1] + maxVertVals[1]) / 2, glm::vec3(0, 1, 0));
-	translate((minVertVals[2] + maxVertVals[2]) / 2, glm::vec3(0, 0, 1));
-
+	for (int i = 0; i < NUM_DIM; i++) {
+		glm::vec3 direction = glm::vec3(0, 0, 0);
+		direction[i] = 1.0f;
+		translate((minVertVals[i] + maxVertVals[i]) / AVG_DIVISOR, direction);
+	}
+	
 	objFile.normalize();
 
 	// To store vertex attribute pointer configurations, use vertex array object (VAO)

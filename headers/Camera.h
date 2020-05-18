@@ -26,9 +26,10 @@ private:
 
 public:
 	Camera(int windowWidth, int windowHeight);
-	~Camera();
 
 	glm::mat4& getProjViewMatrix();
+
+	glm::vec3 getViewerPos();
 
 	// Calculates new aspect ratio and updates proj matrix
 	void setAspectRatio(int windowWidth, int windowHeight);

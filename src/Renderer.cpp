@@ -7,23 +7,35 @@ Renderer::Renderer(ShaderFile vertFile, ShaderFile fragFile, int width, int heig
 	glEnable(GL_DEPTH_TEST);
 }
 
-Renderer::~Renderer() {}
-
 void Renderer::setAspectRatio(int width, int height) {
 	camera.setAspectRatio(width, height);
-	shaders.setUniformProjView(camera.getProjViewMatrix());
+	shaders.setUniformMatrix("projView", camera.getProjViewMatrix());
 }
 
 void Renderer::render(Object& obj) {
 	shaders.load();
-	shaders.setUniformModel(obj.getModelMatrix());
-	shaders.setUniformProjView(camera.getProjViewMatrix());
-	shaders.setUniformColor(obj.getColor());
-	shaders.setUniformLight();
+	
+	shaders.setUniformMatrix("model", obj.getModelMatrix());
+	shaders.setUniformMatrix("projView", camera.getProjViewMatrix());
+	shaders.setUniformVec("color", obj.getColor());
+
+	obj.draw();
+}
+
+void Renderer::render(Object& obj, PointLight& light) {
+	shaders.load();
+
+	shaders.setUniformMatrix("model", obj.getModelMatrix());
+	shaders.setUniformMatrix("projView", camera.getProjViewMatrix());
+	shaders.setUniformVec("color", obj.getColor());
+	shaders.setUniformVec("lightColor", light.getColor());
+	shaders.setUniformVec("lightPos", light.getPosition());
+	shaders.setUniformVec("viewerPos", camera.getViewerPos());
+
 	obj.draw();
 }
 
 void Renderer::rotateCamera(float deg, glm::vec3& axis) {
 	camera.rotate(deg, axis);
-	shaders.setUniformProjView(camera.getProjViewMatrix());
+	shaders.setUniformMatrix("projView", camera.getProjViewMatrix());
 }

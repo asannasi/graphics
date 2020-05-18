@@ -5,14 +5,16 @@ Camera::Camera(int windowWidth, int windowHeight) {
 	setAspectRatio(windowWidth, windowHeight);
 }
 
-Camera::~Camera() {}
-
 inline void Camera::updateProjView() {
 	projView = proj * view;
 }
 
 glm::mat4& Camera::getProjViewMatrix() {
 	return projView;
+}
+
+glm::vec3 Camera::getViewerPos() {
+	return position;
 }
 
 void Camera::setAspectRatio(int windowWidth, int windowHeight) {

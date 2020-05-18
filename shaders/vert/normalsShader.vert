@@ -13,5 +13,5 @@ void main(){
 	// Set position of current vertex and change coordinate spaces
 	// Mutiply matrices right to left
 	gl_Position = projView * model * vec4(vertex, 1.0);
-	normal = normalIn;
+	normal = vec3(model * vec4(normalIn, 0.0f));
 }

@@ -8,11 +8,15 @@
 
 #include "ObjFile.h"
 
-class Object
-{
+class Object {
 private:
+	static const int AVG_DIVISOR = 2;
+
 	// Where translation values reside in the model matrix
 	static const int TRANSLATION_INDEX = 3;
+
+	// Number of elements in glm::vec3
+	static const int NUM_DIM = 3;
 
 	// Matches the attribute index locations with those defined in the shader
 	static const int VERTEX_ATTR_INDEX = 0;
@@ -73,7 +77,7 @@ public:
 	void update(); 
 
 	// Draws model on the screen
-	virtual void draw(); 
+	void draw(); 
 
 };
 

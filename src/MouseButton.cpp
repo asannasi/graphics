@@ -10,8 +10,6 @@ MouseButton::MouseButton(int windowWidth, int windowHeight,
 	updateWindowSize(windowWidth, windowHeight);
 }
 
-MouseButton::~MouseButton(){ }
-
 // Mouse position coordinates start from the upper left of the screen
 // and have range x:[0, windowWidth] and y:[0, windowHeight]. This function
 // shifts range to x:[-windowWidth/2:windowWidth/2] and

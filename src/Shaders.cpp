@@ -53,35 +53,12 @@ void Shaders::load() {
 	glUseProgram(programID);
 }
 
-void Shaders::setUniformModel(glm::mat4 &model) {
-	int modelLoc = glGetUniformLocation(programID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+void Shaders::setUniformMatrix(const GLchar* name, glm::mat4& matrix) {
+	int location = glGetUniformLocation(programID, name);
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-void Shaders::setUniformView(glm::mat4& view) {
-	int viewLoc = glGetUniformLocation(programID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-}
-
-void Shaders::setUniformProj(glm::mat4& proj) {
-	int projLoc = glGetUniformLocation(programID, "proj");
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-}
-
-void Shaders::setUniformProjView(glm::mat4& projView) {
-	int projViewLoc = glGetUniformLocation(programID, "projView");
-	glUniformMatrix4fv(projViewLoc, 1, GL_FALSE, glm::value_ptr(projView));
-}
-
-void Shaders::setUniformColor(glm::vec3& color) {
-	int colorLoc = glGetUniformLocation(programID, "color");
-	glUniform3fv(colorLoc, 1, glm::value_ptr(color));
-}
-
-void Shaders::setUniformLight() {
-	int lightColorLoc = glGetUniformLocation(programID, "lightColor");
-	glUniform3fv(lightColorLoc, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-
-	int lightPosLoc = glGetUniformLocation(programID, "lightPos");
-	glUniform3fv(lightPosLoc, 1, glm::value_ptr(glm::vec3(0,0, 5)));
+void Shaders::setUniformVec(const GLchar* name, glm::vec3& vector) {
+	int location = glGetUniformLocation(programID, name);
+	glUniform3fv(location, 1, glm::value_ptr(vector));
 }

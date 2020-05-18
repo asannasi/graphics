@@ -9,8 +9,6 @@ ObjFile::ObjFile(std::string fileName) {
 	fclose(pFile);
 }
 
-ObjFile::~ObjFile() { }
-
 void ObjFile::parseVertexLine(FILE* pFile) {
 	float x, y, z;
 	float r, g, b;
@@ -35,7 +33,7 @@ void ObjFile::parseNormalLine(FILE* pFile) {
 	glm::vec3 normal = glm::vec3(x, y, z);
 
 	// Normalize normal vector from [-1, 1] to [0,1] 
-	normal = (glm::normalize(normal) * 0.5f) + glm::vec3(0.5f, 0.5f, 0.5f);
+	normal = glm::normalize(normal);
 
 	normals.push_back(normal);
 }

@@ -16,7 +16,5 @@ public:
 	// Create a string from the file contents
 	ShaderFile(std::string fileName);
 
-	~ShaderFile();
-
 	const std::string* getCode();
 };

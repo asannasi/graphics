@@ -15,5 +15,5 @@ void main(){
 	// Mutiply matrices right to left
 	fragPos = vec3(model * vec4(vertex, 1.0));
 	gl_Position = projView * vec4(fragPos, 1.0);
-	normal = normalIn;
+	normal = vec3(model * vec4(normalIn, 0.0f));
 }

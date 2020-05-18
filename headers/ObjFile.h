@@ -50,8 +50,6 @@ public:
 	// Exceptions may be thrown.
 	ObjFile(std::string fileName);
 
-	~ObjFile();
-
 	// Returns a pointer to data parsed from the OBJ file
 	const std::vector<glm::vec3>* getVertices();
 	const std::vector<glm::vec3>* getColors();

@@ -48,7 +48,6 @@ private:
 public:
 	MouseButton(int windowWidth, int windowHeight, 
 		float dragThreshold, float dragRotateFactor, float dragTranslateFactor);
-	~MouseButton();
 
 	// Recalculates precomputed values for coordinate transformation
 	void updateWindowSize(int windowWidth, int windowHeight);

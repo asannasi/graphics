@@ -13,8 +13,6 @@ ShaderFile::ShaderFile(std::string fileName) {
 	fStream.close();
 }
 
-ShaderFile::~ShaderFile() { }
-
 const std::string* ShaderFile::getCode() {
 	return &code;
 }

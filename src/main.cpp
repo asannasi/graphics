@@ -16,6 +16,9 @@ namespace {
 
 	// Colors
 	const glm::vec3 BLUE = glm::vec3(0.0, 0.0, 1.0);
+	const glm::vec3 PURPLE = glm::vec3(1.0, 0.0, 1.0);
+	const glm::vec3 LIGHT_PURPLE = glm::vec3(0.1, 0.0, 0.1);
+	const glm::vec3 WHITE = glm::vec3(1.0, 1.0, 1.0);
 
 	// Constants for object manipulation
 	const float SCALE_FACTOR = 0.5f;
@@ -51,7 +54,7 @@ namespace {
 	Object* objects[NUM_OBJECTS];
 
 	const int NUM_OBJFILES = 2;
-	std::string objFilenames[] = { "a.obj", "sphere.obj" };
+	std::string objFilenames[] = { "bunny.obj", "sphere.obj" };
 	ObjFile objFiles[NUM_OBJFILES];
 
 	// These are the current selected instances, usually those 
@@ -107,6 +110,9 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 				break;
 			case (GLFW_KEY_2):
 				currRenderer = normRenderer;
+				break;
+			case (GLFW_KEY_3):
+				currRenderer = lightRenderer;
 				break;
 
 			// Change selected object's draw mode
@@ -208,7 +214,7 @@ int main(void) {
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
 	// Set window's background default color
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Initialize GLEW, which is a library that checks supported openGL 
 	// extensions at runtime on the target platform. Check if glew was
@@ -244,14 +250,15 @@ int main(void) {
 		std::cerr << e.what() << std::endl;
 		delete vertRenderer;
 		delete normRenderer;
+		delete lightRenderer;
 		glfwDestroyWindow(window);
 		glfwTerminate(); // destroys all windows
 		return EXIT_FAILURE;
 	}
 	
-	objects[0] = new Object(objFiles[0], BLUE);
+	objects[0] = new Object(objFiles[0], PURPLE);
 	objects[1] = new Object(objFiles[1], BLUE);
-	Cube* c = new Cube(1.0f, BLUE);
+	PointLight* pointLight = new PointLight(WHITE, glm::vec3(0, 0, 20));
 
 	// Set the current state
 	currObj = objects[0];
@@ -280,12 +287,8 @@ int main(void) {
 			currObj->translate(magnitude, axis);
 		}
 		
-		// Update and render objects
-		for (int i = 0; i < 1; ++i) {
-			objects[i]->update();
-			currRenderer->render(*objects[i]);
-		}
-		vertRenderer->render(*c);
+		currObj->update();
+		currRenderer->render(*currObj, *pointLight);
 
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
@@ -293,8 +296,10 @@ int main(void) {
 
 	// End of program so deallocate resources
 	delete leftMouseButton;
+	delete rightMouseButton;
 	delete vertRenderer;
 	delete normRenderer;
+	delete lightRenderer;
 	for (int i = 0; i < NUM_OBJECTS; i++) {
 		delete objects[i];
 	}

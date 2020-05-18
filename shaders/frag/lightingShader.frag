@@ -3,6 +3,7 @@
 in vec3 normal;
 in vec3 fragPos;
 
+uniform vec3 viewerPos;
 uniform vec3 color;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
@@ -10,7 +11,13 @@ uniform vec3 lightPos;
 out vec4 fragColor;
 
 void main(){
-	vec3 lightDirection = normalize(lightPos - fragPos);
 	vec3 norm = normalize(normal);
-	fragColor = vec4(lightColor * color * max(dot(norm, lightDirection), 0.0f), 1.0f);
+	vec3 lightVec = normalize(lightPos - fragPos);
+	vec3 diffuse = lightColor * (max(dot(norm, lightVec), 0.0f));
+
+	vec3 viewVec = normalize(viewerPos - fragPos);
+	vec3 reflectVec = reflect(-lightVec, norm);  
+	vec3 specular = lightColor * (pow(max(dot(viewerPos, reflectVec), 0.0f), 128));
+
+	fragColor = vec4(diffuse + specular, 1.0f);
 }
