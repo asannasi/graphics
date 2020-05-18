@@ -73,6 +73,10 @@ glm::vec3& Object::getColor() {
 	return color;
 }
 
+glm::vec3 Object::getCenterInWorld() {
+	return modelToWorld * glm::vec4(0, 0, 0, 1);
+}
+
 bool Object::isSpinning() {
 	return spinning;
 }

@@ -56,6 +56,7 @@ public:
 
 	glm::mat4& getModelMatrix();
 	glm::vec3& getColor();
+	glm::vec3 getCenterInWorld();
 
 	bool isSpinning();
 	void setSpinning(bool spinning);

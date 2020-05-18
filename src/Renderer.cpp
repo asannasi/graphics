@@ -22,14 +22,14 @@ void Renderer::render(Object& obj) {
 	obj.draw();
 }
 
-void Renderer::render(Object& obj, PointLight& light) {
+void Renderer::render(Object& obj, Object& light) {
 	shaders.load();
 
 	shaders.setUniformMatrix("model", obj.getModelMatrix());
 	shaders.setUniformMatrix("projView", camera.getProjViewMatrix());
 	shaders.setUniformVec("color", obj.getColor());
 	shaders.setUniformVec("lightColor", light.getColor());
-	shaders.setUniformVec("lightPos", light.getPosition());
+	shaders.setUniformVec("lightPos", light.getCenterInWorld());
 	shaders.setUniformVec("viewerPos", camera.getViewerPos());
 
 	obj.draw();

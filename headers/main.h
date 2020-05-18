@@ -11,5 +11,4 @@
 #include "Renderer.h"
 #include "ObjFile.h"
 #include "Object.h"
-#include "Light.h"
 #include "MouseButton.h"

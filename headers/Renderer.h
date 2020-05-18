@@ -3,7 +3,6 @@
 #include "Shaders.h"
 #include "Camera.h"
 #include "Object.h"
-#include "Light.h"
 
 /*
  * This class is responsible for rendering objects with the latest shader
@@ -24,6 +23,6 @@ public:
 
 	void setAspectRatio(int width, int height);
 	void render(Object& obj);
-	void render(Object& obj, PointLight& light);
+	void render(Object& obj, Object& light);
 	void rotateCamera(float deg, glm::vec3& axis);
 };

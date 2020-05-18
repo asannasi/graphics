@@ -177,6 +177,11 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	}
 }
 
+// Scrolling will move the current object along the z-axis
+void mouseScrollCallback (GLFWwindow* window, double xoffset, double yoffset) {
+	currObj->translate((float)yoffset, glm::vec3(0, 0, 1));
+}
+
 // Run the interactive graphics application
 int main(void) {
 	// Make sure platform is not OSX
@@ -212,6 +217,7 @@ int main(void) {
 	glfwSetFramebufferSizeCallback(window, windowResizeCallback);
 	glfwSetKeyCallback(window, keyCallback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	glfwSetScrollCallback(window, mouseScrollCallback);
 
 	// Set window's background default color
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -257,8 +263,8 @@ int main(void) {
 	}
 	
 	objects[0] = new Object(objFiles[0], PURPLE);
-	objects[1] = new Object(objFiles[1], BLUE);
-	PointLight* pointLight = new PointLight(WHITE, glm::vec3(0, 0, 20));
+	objects[1] = new Object(objFiles[1], WHITE);
+	Object* pointLight = objects[1];
 
 	// Set the current state
 	currObj = objects[0];
@@ -288,7 +294,9 @@ int main(void) {
 		}
 		
 		currObj->update();
-		currRenderer->render(*currObj, *pointLight);
+		pointLight->update();
+		vertRenderer->render(*pointLight);
+		currRenderer->render(*objects[0], *pointLight);
 
 		glfwSwapBuffers(window); // swap front and back buffers for no flicker
 		glfwPollEvents(); // check if any events are triggered
